@@ -1,0 +1,276 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Management App</title>
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+  <body>
+    <div id="custom-cursor"></div>
+    <div id="toast-container"></div>
+    <div id="splash">
+      <!-- LANDING PANEL -->
+      <div class="auth-panel" id="landing-panel" style="display: none">
+        <div class="splash-logo"></div>
+        <div class="splash-title">Task App</div>
+        <div class="landing-buttons">
+          <button id="btn-goto-signup">Sign Up</button>
+          <button id="btn-goto-login">Log In</button>
+        </div>
+      </div>
+
+      <!-- LOGIN PANEL -->
+      <div class="auth-panel" id="login-panel" style="display: none">
+        <div class="splash-logo"></div>
+        <h2 class="auth-heading">Welcome back</h2>
+        <input
+          type="text"
+          id="login-username"
+          placeholder="Username"
+          autocomplete="off"
+        />
+        <div class="password-wrapper">
+          <input type="password" id="login-password" placeholder="Password" />
+          <button
+            type="button"
+            class="toggle-password"
+            aria-label="Show password"
+          >
+            Show
+          </button>
+        </div>
+        <p class="auth-error" id="login-error"></p>
+        <button class="auth-btn-primary" id="login-submit">Next</button>
+        <button class="auth-btn-secondary" id="login-goto-signup">
+          Don't have an account? Sign Up
+        </button>
+      </div>
+
+      <!-- SIGNUP PANEL -->
+      <div class="auth-panel" id="signup-panel" style="display: none">
+        <div class="splash-logo"></div>
+        <h2 class="auth-heading">Create account</h2>
+        <input
+          type="text"
+          id="signup-username"
+          placeholder="Username"
+          autocomplete="off"
+        />
+        <div class="password-wrapper">
+          <input type="password" id="signup-password" placeholder="Password" />
+          <button
+            type="button"
+            class="toggle-password"
+            aria-label="Show password"
+          >
+            Show
+          </button>
+        </div>
+        <div class="password-wrapper">
+          <input
+            type="password"
+            id="signup-confirm"
+            placeholder="Confirm password"
+          />
+          <button
+            type="button"
+            class="toggle-password"
+            aria-label="Show password"
+          >
+            Show
+          </button>
+        </div>
+        <ul class="password-rules" id="password-rules">
+          <li id="rule-length">At least 6 characters</li>
+          <li id="rule-capital">At least 1 capital letter</li>
+          <li id="rule-match">Passwords match</li>
+        </ul>
+        <p class="auth-error" id="signup-error"></p>
+        <button class="auth-btn-primary" id="signup-submit">Next</button>
+        <button class="auth-btn-secondary" id="signup-goto-login">
+          Already have an account? Log In
+        </button>
+      </div>
+
+      <!-- SUGGESTIONS PANEL -->
+      <div class="auth-panel" id="suggestions-panel" style="display: none">
+        <div class="splash-logo"></div>
+        <h2 class="auth-heading">Quick start</h2>
+        <p class="suggestions-subtitle">Add some tasks to get going</p>
+        <div class="suggestions-list">
+          <div class="suggestion-item" data-title="Buy groceries">
+            <span class="suggestion-label">Buy groceries</span>
+            <button class="suggestion-add-btn">+ Add</button>
+          </div>
+          <div class="suggestion-item" data-title="Work on the project">
+            <span class="suggestion-label">Work on the project</span>
+            <button class="suggestion-add-btn">+ Add</button>
+          </div>
+          <div class="suggestion-item" data-title="Reply to emails">
+            <span class="suggestion-label">Reply to emails</span>
+            <button class="suggestion-add-btn">+ Add</button>
+          </div>
+          <div class="suggestion-item" data-title="Go for a walk">
+            <span class="suggestion-label">Go for a walk</span>
+            <button class="suggestion-add-btn">+ Add</button>
+          </div>
+          <div class="suggestion-item" data-title="Read for 20 minutes">
+            <span class="suggestion-label">Read for 20 minutes</span>
+            <button class="suggestion-add-btn">+ Add</button>
+          </div>
+        </div>
+        <button class="auth-btn-primary" id="suggestions-done">Done →</button>
+      </div>
+    </div>
+    <div class="page-container">
+      <div class="app-header">
+        <h1>Task Management App</h1>
+        <button id="logout-btn">Log out</button>
+      </div>
+      <div class="kanban-board">
+        <div class="kanban-column" id="todo-column">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Todo</span>
+            <button id="create-task">+ New Task</button>
+          </div>
+          <div class="kanban-tasks" id="active-tasks"></div>
+        </div>
+
+        <div class="kanban-column" id="doing-column">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Doing</span>
+          </div>
+          <div class="kanban-tasks" id="inprogress-tasks"></div>
+        </div>
+
+        <div class="kanban-column" id="done-column">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Done</span>
+          </div>
+          <div class="kanban-tasks" id="completed-tasks"></div>
+        </div>
+      </div>
+    </div>
+    <div id="loading-indicator" style="display: none">
+      <p id="loading-text">Loading tasks...</p>
+    </div>
+
+    <div id="column-focus-overlay" style="display: none">
+      <div id="column-focus-panel">
+        <div id="column-focus-header">
+          <h2 id="column-focus-title"></h2>
+          <div id="column-focus-header-right">
+            <span id="column-focus-count"></span>
+            <button id="column-focus-close">✕</button>
+          </div>
+        </div>
+        <div id="column-focus-list"></div>
+      </div>
+    </div>
+
+    <div id="category-focus-overlay" style="display: none">
+      <div id="category-focus-panel">
+        <div id="category-focus-header">
+          <div id="category-focus-title-row">
+            <span id="category-focus-dot"></span>
+            <h2 id="category-focus-title"></h2>
+          </div>
+          <button id="category-focus-close">✕</button>
+        </div>
+        <div id="category-focus-task-count"></div>
+        <div id="category-focus-list"></div>
+      </div>
+    </div>
+
+    <div id="task-detail-overlay" style="display: none">
+      <div id="task-detail-panel">
+        <h3 id="task-detail-heading">Edit Task</h3>
+        <div class="task-detail-field">
+          <label for="task-detail-title">Title</label>
+          <input type="text" id="task-detail-title" placeholder="Task title" />
+        </div>
+        <div class="task-detail-field">
+          <label for="task-detail-description">Description</label>
+          <textarea
+            id="task-detail-description"
+            placeholder="Add a description..."
+          ></textarea>
+        </div>
+        <div class="task-detail-field">
+          <label>Category</label>
+          <div id="task-detail-categories">
+            <button
+              class="category-option"
+              data-category="Work"
+              data-color="#4A90D9"
+            >
+              <span class="category-dot" style="background: #4a90d9"></span>
+              Work
+            </button>
+            <button
+              class="category-option"
+              data-category="Personal"
+              data-color="#7ED67E"
+            >
+              <span class="category-dot" style="background: #7ed67e"></span>
+              Personal
+            </button>
+            <button
+              class="category-option"
+              data-category="Health"
+              data-color="#E8734A"
+            >
+              <span class="category-dot" style="background: #e8734a"></span>
+              Health
+            </button>
+            <button
+              class="category-option"
+              data-category="Learning"
+              data-color="#9B6DD6"
+            >
+              <span class="category-dot" style="background: #9b6dd6"></span>
+              Learning
+            </button>
+            <button
+              class="category-option"
+              data-category="Finance"
+              data-color="#E8C84A"
+            >
+              <span class="category-dot" style="background: #e8c84a"></span>
+              Finance
+            </button>
+            <button
+              class="category-option"
+              data-category="Other"
+              data-color="#A0A0A0"
+            >
+              <span class="category-dot" style="background: #a0a0a0"></span>
+              Other
+            </button>
+          </div>
+        </div>
+        <div id="task-detail-actions">
+          <button id="task-detail-cancel">Cancel</button>
+          <button id="task-detail-done">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Sidebar -->
+    <div id="category-sidebar">
+      <h3 id="sidebar-title">Categories</h3>
+      <div id="category-list"></div>
+    </div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
