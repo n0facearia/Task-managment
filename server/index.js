@@ -4,7 +4,7 @@ const path = require("path");
 const Database = require("better-sqlite3");
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 const DB_PATH = path.join(__dirname, "database.sqlite");
 
 app.use(cors());
