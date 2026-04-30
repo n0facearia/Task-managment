@@ -1,192 +1,198 @@
-# Task Management App
+# Task Management App (Next.js + Express)
 
-## Overview
+## Description
 
-This project is a client-side Task Management application built with vanilla HTML, CSS, and JavaScript. It is designed as a learning-focused implementation that explores core frontend concepts such as state management, asynchronous API interaction, UI rendering patterns, and basic system design.
-
-The application allows users to authenticate, create and manage tasks, and move tasks through a simple Kanban-style workflow (Todo → Doing → Done). It integrates with a mock backend API for persistence.
+A Kanban-style task management application that allows users to create, organize, and track tasks across three columns: **Todo**, **Doing**, and **Done**. The app features user authentication, task categorization with color-coded labels, and drag-and-drop functionality.
 
 ---
 
-## Core Objectives
+## Tech Stack
 
-- Practice structured frontend state management without frameworks
-- Understand API interaction patterns (CRUD over HTTP)
-- Implement UI state separation from domain state
-- Explore async workflows, loading states, and error handling
-- Build a bounded implementation workflow with clear UI rules
+- **Frontend**: Next.js 14.2.35 (App Router) with React
+- **Backend**: Express.js REST API server
+- **Database**: SQLite (better-sqlite3)
+- **Styling**: Custom CSS (no external UI frameworks)
 
 ---
 
-## Features
+## Architecture
 
-### Authentication
+### Frontend/Backend Separation
 
-- User signup and login system (MockAPI-based)
-- Session persistence using `localStorage`
-- Request safety using abort controllers and request tokens
+This project uses a **decoupled architecture**:
+
+- **Frontend** (`nextjs-app/`): Next.js application handling UI rendering, client-side state management, and user interactions
+- **Backend** (`server/`): Standalone Express server providing REST API endpoints for data persistence
+
+The two runtimes communicate exclusively via HTTP API calls:
+
+```
+Next.js (port 3000) → Fetch API → Express (port 3001) → SQLite
+```
+
+### Data Flow
+
+```
+User Action → React State → API Request → Express Server → SQLite → Response → React State Update → UI Re-render
+```
+
+### State Management
+
+- **React Context** (`TaskContext.tsx`): Centralized task state management
+- **Local Component State**: UI-specific state (editing modes, panel visibility)
+- **Optimistic Updates**: Tasks show immediately with temporary IDs, then reconcile with server response
+
+---
+
+## Development History
+
+### Origin
+This project started as a **vanilla HTML/CSS/JavaScript** application with all logic contained in `script.js` using direct DOM manipulation (`document.querySelector`, `innerHTML`).
+
+### Migration Process
+The app was migrated **step-by-step** into Next.js:
+
+1. **Initial State**: Hybrid setup with legacy JS coexisting with partial Next.js structure
+2. **Component Creation**: Replaced `script.js` logic with React components (`TaskContainer`, `TaskItem`, `AuthSplash`, etc.)
+3. **State Migration**: Moved from manual DOM updates to React state-driven rendering
+4. **API Layer**: Created `api.ts` to communicate with Express backend
+5. **Debugging Phases**:
+   - Create task failure (root cause: missing input field for title state)
+   - Authentication flow visibility issues
+   - Custom cursor performance issues (removed)
+   - Missing `"use client"` directives in client components
+   - SQL syntax investigation (parameters were already correct)
+
+### Approach
+The migration followed an **incremental strategy**:
+- Feature-by-feature replacement (not full rewrite)
+- Minimal breaking changes during transition
+- Isolated testing with minimal reproduction cases
+- State-first UI design (React replaces DOM manipulation)
+
+---
+
+## Key Features
 
 ### Task Management
+- ✅ **Create Tasks** - Inline creation with auto-edit mode for title
+- ✅ **Edit Tasks** - Update title, description, and category (inline or detail panel)
+- ✅ **Delete Tasks** - Remove tasks with confirmation
+- ✅ **Drag and Drop** - Move tasks between Todo, Doing, and Done columns
+- ✅ **Task Limit** - Maximum 20 active tasks enforced
 
-- Create tasks with title and optional description
-- Edit task title and description inline
-- Delete tasks
-- Move tasks across states:
-  - Todo
-  - Doing
-  - Done
+### Organization
+- ✅ **Categories** - 6 color-coded categories (Work, Personal, Health, Learning, Finance, Other)
+- ✅ **Category Filtering** - Sidebar to filter tasks by category
+- ✅ **Focus Views** - Double-click columns or categories for expanded view
 
-- Drag-and-drop support for status changes
-- Task limit constraint (max active tasks)
+### User System
+- ✅ **Authentication** - Signup and login with username/password
+- ✅ **Session Persistence** - Uses `localStorage` to remember logged-in user
+- ✅ **User-Specific Tasks** - Each user sees only their own tasks
 
-### UI System
-
-- Custom Kanban board layout
-- Splash + authentication flow (landing, login, signup, onboarding suggestions)
-- Inline editing system with controlled focus handling
-- Custom cursor and toast notification system
-- Loading state indicator for API operations
-
-### Data Persistence
-
-- Tasks stored via MockAPI backend
-- User-specific task filtering
-- Temporary task handling before server confirmation
+### UI Features
+- ✅ **Toast Notifications** - Temporary messages for user feedback
+- ✅ **Loading States** - Visual feedback during API operations
+- ✅ **Onboarding Suggestions** - Quick-start task suggestions after signup
 
 ---
 
-## Architecture Overview
+## Project Structure
 
-### State Layers
-
-- `state.tasks`
-  Core domain state (all tasks loaded from server)
-
-- `uiState`
-  UI-only state (editing focus, active field)
-
-- `authStore`
-  Authentication state + request control (session, abort controllers, request tokens)
-
----
-
-### Key Design Patterns
-
-- **Separation of concerns (partial)**
-  - API calls are isolated into service-like functions
-  - UI rendering is separated into `renderBoard` / `renderColumn`
-
-- **Optimistic + reconciled updates**
-  - Temporary tasks (`temp-*`) exist before server confirmation
-  - Server response replaces local placeholder
-
-- **Request safety system**
-  - AbortController per domain (`auth`, `tasks`)
-  - Request tokens to prevent stale responses
-
-- **UI-driven state transitions**
-  - Kanban transitions handled via UI controls and drag-and-drop
-
----
-
-## Data Model
-
-### Task
-
-```js
-{
-  id: string,
-  title: string,
-  description: string,
-  status: "active" | "inProgress" | "completed",
-  username: string
-}
 ```
-
-### User
-
-```js
-{
-  username: string,
-  password: string
-}
+task-creation-app/
+├── nextjs-app/               # Frontend (Next.js)
+│   ├── app/
+│   │   ├── components/       # React components
+│   │   │   ├── AuthSplash.tsx
+│   │   │   ├── TaskContainer.tsx
+│   │   │   ├── TaskItem.tsx
+│   │   │   ├── KanbanColumn.tsx
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── TaskDetailPanel.tsx
+│   │   │   ├── DragDropHandler.tsx
+│   │   │   ├── CategoryFocusView.tsx
+│   │   │   ├── ColumnFocusView.tsx
+│   │   │   ├── Header.tsx
+│   │   │   └── Toast.tsx
+│   │   ├── context/
+│   │   │   └── TaskContext.tsx  # State management
+│   │   ├── lib/
+│   │   │   └── api.ts          # API layer
+│   │   ├── globals.css         # Styles
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   └── package.json
+├── server/                   # Backend (Express)
+│   ├── index.js              # Express server + SQLite setup
+│   └── package.json
+├── README.md
+├── AGENT_CONTEXT.md         # AI/engineer handover document
+└── Prompts used.md          # Development history
 ```
 
 ---
 
-## Task Flow
+## Getting Started
 
-1. User logs in or signs up
-2. Tasks are fetched from API filtered by username
-3. User creates or imports tasks
-4. Tasks are managed in a Kanban workflow
-5. Changes are synced with backend API
-6. UI re-renders based on updated state
+### Prerequisites
+- Node.js installed
+- npm or yarn
 
----
+### Running the Application
 
-## API Layer
+1. **Start the backend server:**
+   ```bash
+   cd server
+   npm install
+   node index.js
+   ```
+   Server runs at `http://localhost:3001`
 
-The app interacts with a MockAPI backend:
-
-- `GET /users`
-- `POST /users`
-- `GET /tasks?username=...`
-- `POST /tasks`
-- `PUT /tasks/:id`
-- `DELETE /tasks/:id`
-
-All requests are wrapped with a safety layer using `safeFetch`.
-
----
-
-## Project Structure (Current Implementation)
-
-This project is implemented as a single-file application:
-
-```
-index.html
-└── contains:
-    ├── HTML structure (auth + app UI)
-    ├── CSS (inline styles)
-    └── JavaScript (full application logic)
-```
+2. **Start the frontend:**
+   ```bash
+   cd nextjs-app
+   npm install
+   npm run dev
+   ```
+   App available at `http://localhost:3000`
 
 ---
 
-## Known Design Constraints
+## API Endpoints
 
-- No frontend framework used (vanilla JS only)
-- No dedicated backend (MockAPI used as persistence layer)
-- State management is manual and centralized
-- UI rendering is full or partial re-render based on state changes
-- Authentication is simplified (no encryption or token auth)
-
----
-
-## Learning Focus Areas
-
-This project specifically explores:
-
-- State vs UI state separation
-- Async request lifecycle management
-- Handling race conditions in frontend apps
-- UI re-render strategies
-- Event-driven architecture in vanilla JS
-- Early-stage system design discipline
+| Method | Endpoint | Description |
+|--------|-----------|-------------|
+| GET | `/users` | List all users |
+| POST | `/users` | Create new user |
+| GET | `/tasks?username=X` | Fetch tasks for user |
+| POST | `/tasks` | Create new task |
+| PUT | `/tasks/:id` | Update task |
+| DELETE | `/tasks/:id` | Delete task |
 
 ---
 
-## Future Improvements (Planned Direction)
+## Stability Note
 
-- Refactor into modular architecture (services, state, UI layers)
-- Introduce explicit domain layer for tasks
-- Centralize state updates and rendering pipeline
-- Reduce direct API coupling in UI handlers
-- Improve separation between business rules and UI logic
+The application has been tested and stabilized through multiple debugging cycles. The Next.js frontend builds successfully, and the Express backend handles all CRUD operations.
+
+**Important**: The backend runs as a **separate process** from the frontend. Both must be running for full functionality.
+
+**Known Limitations**:
+- Passwords are stored in plaintext (no hashing implemented)
+- No authentication tokens - relies on `localStorage` username check
+- No advanced security hardening for production use
 
 ---
 
-## Notes
+## Documentation
 
-This project is intentionally kept framework-free to focus on understanding core frontend behavior and system design principles at a low level.
+For detailed development history and AI agent context, see:
+- **`Prompts used.md`** - Step-by-step migration and debugging history
+- **`AGENT_CONTEXT.md`** - Handover document for developers/agents
+
+---
+
+## Last Updated
+2026-04-30
