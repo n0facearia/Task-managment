@@ -11,7 +11,8 @@ A Kanban-style task management application that allows users to create, organize
 - **Frontend**: Next.js 14.2.35 (App Router) with React
 - **Backend**: Express.js REST API server
 - **Database**: SQLite (better-sqlite3)
-- **Styling**: Custom CSS (no external UI frameworks)
+- **Styling**: Tailwind CSS + DaisyUI + Custom CSS (`globals.css`)
+- **Animations**: Framer Motion
 
 ---
 
@@ -62,6 +63,14 @@ The app was migrated **step-by-step** into Next.js:
    - Custom cursor performance issues (removed)
    - Missing `"use client"` directives in client components
    - SQL syntax investigation (parameters were already correct)
+6. **UI Framework Migration** (2026-05):
+   - Integrated **Tailwind CSS + DaisyUI** for utility-first styling
+   - Migrated animations to **Framer Motion** (`motion.div`, `motion.button`)
+   - Added `@tailwind` directives to `globals.css`
+7. **Kanban Board Layout Fix** (2026-05):
+   - Fixed columns being cut off: changed `body` from `overflow-x: hidden` to `overflow-x: auto`
+   - Fixed board width: changed `.kanban-board` from `max-width: 100%` to `min-width: 872px`
+   - Board now displays all 3 columns (Todo, Doing, Done) centered and fully visible
 
 ### Approach
 The migration followed an **incremental strategy**:
@@ -195,4 +204,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-04-30
+2026-05-06

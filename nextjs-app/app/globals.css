@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --accent-color: #1e88e5;
 }
@@ -431,7 +435,7 @@ h1 {
 }
 
 body {
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 .kanban-board {
@@ -440,7 +444,7 @@ body {
   flex: 1;
   overflow-x: auto;
   width: fit-content;
-  max-width: 100%;
+  min-width: 872px;
 }
 
 .kanban-column {

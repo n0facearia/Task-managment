@@ -69,6 +69,25 @@ An **AI agent** was used throughout the process to perform step-by-step migratio
 - Improved CSS spacing between column title and create task button
 - Application reached stable, functional state
 
+### Phase 7: UI Framework Migration (2026-05)
+- Integrated **Tailwind CSS + DaisyUI** into the project
+- Created `tailwind.config.js` with DaisyUI plugin
+- Created `postcss.config.js` for PostCSS processing
+- Added `@tailwind base`, `@tailwind components`, `@tailwind utilities` directives to `globals.css`
+- Migrated animations to **Framer Motion** (`motion.div`, `motion.button`) in:
+  - `AuthSplash.tsx` - Panel slide-in animations
+  - `TaskItem.tsx` - Hover/tap scale effects on buttons
+  - `TaskContainer.tsx` - Loading spinner rotation animation
+- Components using Framer Motion: `whileHover={{ scale: 1.05 }}`, `whileTap={{ scale: 0.95 }}`, `initial`/`animate` for opacity and position transitions
+
+### Phase 8: Kanban Board Layout Fix (2026-05)
+- **Symptom**: 3 Kanban columns (Todo, Doing, Done) cut off mid-Doing column, appearing clipped inside a narrow frame
+- **Diagnosis**: The board's parent container was constraining the width, and `body { overflow-x: hidden }` was clipping the overflow
+- **Fix applied to `globals.css`**:
+  - Changed `body` from `overflow-x: hidden` to `overflow-x: auto` (prevents clipping of board scrollbar)
+  - Changed `.kanban-board` from `max-width: 100%` to `min-width: 872px` (ensures all 3 columns + gaps fit: 3×280 + 2×16 = 872px)
+- **Result**: All 3 columns now display centered and fully visible with horizontal scrolling on narrow viewports
+
 ---
 
 ## 3. Problem-Solving Approach
@@ -142,5 +161,7 @@ For a production project, a more planned approach with:
 | `nextjs-app/app/components/TaskDetailPanel.tsx` | Added `"use client"` directive |
 | `nextjs-app/app/components/Sidebar.tsx` | Added `"use client"` directive |
 | `nextjs-app/app/page.tsx` | Removed test button, cleaned up state |
-| `nextjs-app/app/globals.css` | Improved column header spacing |
+| `nextjs-app/app/globals.css` | Improved column header spacing; added `@tailwind` directives; fixed layout (`overflow-x: auto`, `min-width: 872px`) |
+| `nextjs-app/tailwind.config.js` | New file: Tailwind + DaisyUI configuration |
+| `nextjs-app/postcss.config.js` | New file: PostCSS configuration |
 | `server/index.js` | Audited SQL syntax (was already correct) |

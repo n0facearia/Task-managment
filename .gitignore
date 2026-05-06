@@ -1,5 +1,7 @@
 server/database.sqlite
 node_modules/
 server/node_modules/
+nextjs-app/node_modules/
+.next/
 .env
 .DS_Store

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import * as api from "../lib/api";
 import { useToast } from "./Toast";
 
@@ -191,7 +192,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
   return (
     <div id="splash">
       {panel === "landing" && (
-        <div className="auth-panel panel-enter" id="landing-panel">
+        <motion.div className="auth-panel panel-enter" id="landing-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           <div className="splash-logo"></div>
           <div className="splash-title">Task App</div>
           <div className="landing-buttons">
@@ -202,11 +203,11 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
               Log In
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {panel === "signup" && (
-        <div className="auth-panel panel-enter" id="signup-panel">
+        <motion.div className="auth-panel panel-enter" id="signup-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           <h2 className="auth-heading">Create account</h2>
           <input
             ref={signupUsernameRef}
@@ -300,11 +301,11 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
           >
             Already have an account? Log in
           </button>
-        </div>
+        </motion.div>
       )}
 
       {panel === "login" && (
-        <div className="auth-panel panel-enter" id="login-panel">
+        <motion.div className="auth-panel panel-enter" id="login-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           <h2 className="auth-heading">Welcome back</h2>
           <input
             ref={loginUsernameRef}
@@ -359,11 +360,11 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
           >
             Do not have an account? Sign up
           </button>
-        </div>
+        </motion.div>
       )}
 
       {panel === "suggestions" && (
-        <div className="auth-panel panel-enter" id="suggestions-panel">
+        <motion.div className="auth-panel panel-enter" id="suggestions-panel" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
           <h2 className="auth-heading">Quick start</h2>
           <p className="suggestions-subtitle">Add some tasks to get started</p>
           <div className="suggestions-list">
@@ -386,7 +387,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
           <button id="suggestions-done" className="auth-btn-primary" onClick={handleSuggestionsDone}>
             Lets go
           </button>
-        </div>
+        </motion.div>
       )}
     </div>
   );

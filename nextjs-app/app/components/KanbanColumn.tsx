@@ -1,3 +1,5 @@
+"use client";
+
 import type { ReactNode } from "react";
 
 interface KanbanColumnProps {
@@ -17,7 +19,9 @@ export default function KanbanColumn({ title, id, headerAction, onDblClick, chil
         </span>
         {headerAction}
       </div>
-      <div className="kanban-tasks">{children}</div>
+      <div className="kanban-tasks">
+        {children}
+      </div>
     </div>
   );
 }

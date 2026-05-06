@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import Header from "./Header";
 import KanbanColumn from "./KanbanColumn";
 import Sidebar from "./Sidebar";
@@ -112,7 +113,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
       <div className="page-container" style={{ display: "flex" }}>
         <Header onLogout={handleLogout} />
         <div className="loading-state">
-          <div className="loading-spinner"></div>
+          <motion.div className="loading-spinner" animate={{ rotate: 360 }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} />
           <p>Loading tasks...</p>
         </div>
       </div>

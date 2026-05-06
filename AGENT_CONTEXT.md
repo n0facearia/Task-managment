@@ -12,6 +12,8 @@ This is a **task management system** (Kanban-style) that allows users to:
 - **Frontend**: Next.js 14.2.35 (App Router)
 - **Backend**: Express.js server
 - **Database**: SQLite (better-sqlite3)
+- **Styling**: Tailwind CSS + DaisyUI + Custom CSS (`globals.css`)
+- **Animations**: Framer Motion
 - **Runtime**: Frontend and backend are **separate runtimes**
   - Frontend: `nextjs-app/` (runs on port 3000)
   - Backend: `server/` (runs on port 3001)
@@ -120,9 +122,24 @@ UI Re-render (React)
    - **Auth flow issues**: Required proper conditional rendering
    - **Custom cursor removed**: Performance issues led to removal
    - **Missing "use client"**: `TaskDetailPanel.tsx` and `Sidebar.tsx` broke interactivity
-   - **SQL syntax concerns**: Investigated missing commas in `.run()` calls (were already correct)
+    - **SQL syntax concerns**: Investigated missing commas in `.run()` calls (were already correct)
 
-5. **Final state**: React-driven UI with Express backend, minimal legacy patterns
+5. **UI Framework Migration** (2026-05):
+   - Integrated **Tailwind CSS + DaisyUI** (`tailwind.config.js`, `postcss.config.js`)
+   - Added `@tailwind base/components/utilities` directives to `globals.css`
+   - Migrated from previous motion library to **Framer Motion** across components
+   - Components using `motion.div`/`motion.button`: `AuthSplash`, `TaskItem`, `TaskContainer`
+   - Animation properties: `whileHover`, `whileTap`, `initial`, `animate`
+
+6. **Kanban Board Layout Fix** (2026-05):
+   - **Problem**: 3 columns cut off mid-Doing column, appearing clipped inside a narrow frame
+   - **Root cause 1**: `body { overflow-x: hidden }` clipped horizontal overflow before the board's scrollbar could activate
+   - **Root cause 2**: `.kanban-board` had `max-width: 100%` which constrained the board narrower than the total column width (3 × 280px + 2 × 16px gaps = 872px)
+   - **Fix 1**: Changed `body` from `overflow-x: hidden` to `overflow-x: auto`
+   - **Fix 2**: Changed `.kanban-board` from `max-width: 100%` to `min-width: 872px`
+   - **Result**: All 3 columns now display centered and fully visible with horizontal scrolling on narrow viewports
+
+7. **Final state**: React-driven UI with Express backend, DaisyUI styling, Framer Motion animations
 
 ---
 
@@ -200,6 +217,6 @@ task-creation-app/
 
 ---
 
-**Last Updated**: 2026-04-30  
-**Agent**: AI Assistant (big-pickle model)  
-**Project State**: Stable, functional, ready for feature development
+**Last Updated**: 2026-05-06
+**Agent**: AI Assistant (big-pickle model)
+**Project State**: Stable, functional, with DaisyUI styling and Framer Motion animations

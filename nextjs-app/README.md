@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Management App - Frontend (Next.js)
+
+This is the frontend of a **Kanban-style task management application** built with Next.js, Tailwind CSS + DaisyUI, and Framer Motion.
+
+## Tech Stack
+
+- **Framework**: Next.js 14.2.35 (App Router)
+- **UI**: React + Tailwind CSS + DaisyUI
+- **Animations**: Framer Motion
+- **State Management**: React Context (`TaskContext.tsx`)
+- **Backend Communication**: REST API via `app/lib/api.ts` (Express server on port 3001)
 
 ## Getting Started
 
-First, run the development server:
+1. **Start the backend server first** (required):
+   ```bash
+   cd ../server
+   npm install
+   node index.js
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+2. **Install dependencies and start the frontend**:
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+3. Open [http://localhost:3000](http://localhost:3000)
+
+## Project Structure
+
+```
+app/
+├── components/       # React components
+│   ├── AuthSplash.tsx          # Login/signup UI
+│   ├── TaskContainer.tsx       # Main kanban board
+│   ├── TaskItem.tsx            # Individual task card
+│   ├── KanbanColumn.tsx        # Column container
+│   ├── Sidebar.tsx             # Category filter sidebar
+│   ├── TaskDetailPanel.tsx     # Task editing overlay
+│   ├── DragDropHandler.tsx     # Drag-and-drop logic
+│   ├── CategoryFocusView.tsx   # Category expanded view
+│   ├── ColumnFocusView.tsx     # Column expanded view
+│   ├── Header.tsx              # App header with logout
+│   └── Toast.tsx               # Toast notifications
+├── context/
+│   └── TaskContext.tsx         # Global task state
+├── lib/
+│   └── api.ts                  # API wrapper functions
+├── globals.css                 # Custom styles + Tailwind
+├── layout.tsx                  # Root layout
+├── page.tsx                    # Entry point
+└── constants.ts                # Category colors
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Key Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Kanban board with Todo / Doing / Done columns
+- Inline task creation, editing, and deletion
+- Drag-and-drop between columns
+- Color-coded categories with sidebar filtering
+- Focus views (double-click columns or categories)
+- User authentication with session persistence
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Note
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project uses **Tailwind CSS + DaisyUI** for styling and **Framer Motion** for animations. The `@tailwind` directives in `globals.css` are required for Tailwind utilities to work.

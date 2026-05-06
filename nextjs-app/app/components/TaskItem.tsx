@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { motion } from "framer-motion";
 import type { Task, TaskStatus } from "../context/TaskContext";
 import { CATEGORY_COLORS } from "../constants";
 
@@ -76,10 +77,13 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
   const categoryColor = CATEGORY_COLORS[task.category];
 
   return (
-    <div
+    <motion.div
       className="task"
       draggable
       data-task-id={task.id}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.2 }}
     >
       {isEditingTitle ? (
         <input
@@ -120,18 +124,20 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
               onClick={() => onOpenDetail(task)}
             />
           ) : (
-            <button
+            <motion.button
               className="task-set-category-btn"
               onClick={() => onOpenDetail(task)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Set category
-            </button>
+            </motion.button>
           )}
         </div>
         <div className="task-buttons">
           <div className="task-buttons-left">
             {showBack && (
-              <button
+              <motion.button
                 className="btn-back"
                 onClick={() => {
                   if (task.status === "inProgress") {
@@ -140,14 +146,16 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
                     onStatusChange(task.id, "inProgress");
                   }
                 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 ← Back
-              </button>
+              </motion.button>
             )}
           </div>
           <div className="task-buttons-right">
             {showNext && (
-              <button
+              <motion.button
                 className="btn-next"
                 onClick={() => {
                   if (task.status === "active") {
@@ -156,18 +164,22 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
                     onStatusChange(task.id, "completed");
                   }
                 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 Next →
-              </button>
+              </motion.button>
             )}
-            <button
+            <motion.button
               className="cross-button"
               aria-label="Delete task"
               onClick={() => onDelete(task.id)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             />
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
