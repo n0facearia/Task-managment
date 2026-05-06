@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import "./globals.css";
 import { ToastProvider } from "./components/Toast";
+import HalftoneBackground from "./components/HalftoneBackground";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body suppressHydrationWarning>
+        <HalftoneBackground />
         <ToastProvider>{children}</ToastProvider>
       </body>
     </html>

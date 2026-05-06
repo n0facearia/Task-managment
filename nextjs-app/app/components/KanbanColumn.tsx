@@ -16,27 +16,21 @@ export default function KanbanColumn({ title, id, headerAction, onDblClick, chil
     <motion.div
       className="kanban-column"
       id={id}
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
+      style={{ flex: "0 0 280px", position: "relative", zIndex: 0 }}
+      whileHover={{ y: -4, boxShadow: "0 12px 24px rgba(0, 0, 0, 0.4)", zIndex: 10 }}
       transition={{ type: "spring", stiffness: 300, damping: 25 }}
     >
-      <motion.div
-        className="kanban-column-header"
-        whileHover={{ backgroundColor: "rgba(255,255,255,0.02)" }}
-      >
+      <div className="kanban-column-header">
         <span className="kanban-column-title" onDoubleClick={onDblClick}>
           {title}
         </span>
         {headerAction}
-      </motion.div>
-      <motion.div
-        className="kanban-tasks"
-        whileDrag={{ backgroundColor: "rgba(30,136,229,0.05)" }}
-      >
+      </div>
+      <div className="kanban-tasks">
         <AnimatePresence mode="popLayout">
           {children}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </motion.div>
   );
 }
