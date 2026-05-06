@@ -72,6 +72,14 @@ The app was migrated **step-by-step** into Next.js:
    - Fixed board width: changed `.kanban-board` from `max-width: 100%` to `min-width: 872px`
    - Board now displays all 3 columns (Todo, Doing, Done) centered and fully visible
 
+8. **Interactive UI Enhancements** (2026-05):
+    - Added `HalftoneBackground.tsx`: Canvas-based interactive dot grid background
+    - Optimized canvas rendering with `requestAnimationFrame` + `needsRedraw` flag (idle = 0 CPU)
+    - Halftone specs: 12×14 dot spacing, 150px mouse radius, dots grow 1.5→4px, opacity 0.04→0.15
+    - Column hover float: `y: -4px`, shadow overlay, `z-index` stacking to overlap header
+    - Task hover float: `scale: 1.02`, `y: -2px`, shadow, fast transition
+    - Category sidebar buttons: same float effect with `duration: 0.15s` quick response
+
 ### Approach
 The migration followed an **incremental strategy**:
 - Feature-by-feature replacement (not full rewrite)
@@ -104,6 +112,8 @@ The migration followed an **incremental strategy**:
 - ✅ **Toast Notifications** - Temporary messages for user feedback
 - ✅ **Loading States** - Visual feedback during API operations
 - ✅ **Onboarding Suggestions** - Quick-start task suggestions after signup
+- ✅ **Interactive Halftone Background** - Canvas-based dot grid that reacts to mouse movement (idle = 0 CPU overhead)
+- ✅ **Hover Float Effects** - Kanban columns, task cards, and category sidebar buttons lift with subtle scale and drop shadow on hover
 
 ---
 
@@ -125,6 +135,7 @@ task-creation-app/
 │   │   │   ├── ColumnFocusView.tsx
 │   │   │   ├── Header.tsx
 │   │   │   └── Toast.tsx
+│   │   │   └── HalftoneBackground.tsx
 │   │   ├── context/
 │   │   │   └── TaskContext.tsx  # State management
 │   │   ├── lib/
@@ -204,4 +215,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-05-06
+2026-05-06 (Interactive halftone background + hover float effects)
