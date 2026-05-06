@@ -205,7 +205,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
             <div className="flex flex-col items-center gap-2.5 w-full mt-2">
               <button
                 id="btn-goto-signup"
-                className="w-full py-2.5 border-none rounded-lg bg-[var(--accent-color)] text-[#1c1c1c] text-sm font-semibold font-inherit transition-colors duration-150 hover:bg-[#42a5f5]"
+                className="w-full py-2.5 border-none rounded-lg bg-accent text-[#1c1c1c] text-sm font-semibold font-inherit transition-colors duration-150 hover:bg-accent-hover"
                 onClick={() => setPanel("signup")}
               >
                 Sign Up
@@ -230,7 +230,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
               type="text"
               placeholder="Username"
               autoComplete="off"
-              className="w-full bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-[var(--accent-color)]"
+              className="w-full bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
             />
             <div className="password-wrapper">
               <input
@@ -238,7 +238,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
                 id="signup-password"
                 type="password"
                 placeholder="Password"
-                className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-[var(--accent-color)]"
+                className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
                 onChange={(e) =>
                   validatePassword(e.target.value, signupConfirmRef.current?.value || "")
                 }
@@ -264,7 +264,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
                 id="signup-confirm"
                 type="password"
                 placeholder="Confirm password"
-                className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-[var(--accent-color)]"
+                className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
                 onChange={(e) =>
                   validatePassword(signupPasswordRef.current?.value || "", e.target.value)
                 }
@@ -306,7 +306,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
             </span>
             <button
               id="signup-submit"
-              className="w-full bg-[var(--accent-color)] border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-[#42a5f5]"
+              className="w-full bg-accent border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
               onClick={handleSignup}
               disabled={loading}
             >
@@ -334,7 +334,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
               type="text"
               placeholder="Username"
               autoComplete="off"
-              className="w-full bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-[var(--accent-color)]"
+              className="w-full bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
             />
             <div className="password-wrapper">
               <input
@@ -342,7 +342,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
                 id="login-password"
                 type="password"
                 placeholder="Password"
-                className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-[var(--accent-color)]"
+                className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleLogin();
                 }}
@@ -367,7 +367,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
             </span>
             <button
               id="login-submit"
-              className="w-full bg-[var(--accent-color)] border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-[#42a5f5]"
+              className="w-full bg-accent border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
               onClick={handleLogin}
               disabled={loading}
             >
@@ -394,12 +394,12 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
               {SUGGESTIONS.map((title, index) => (
                 <div
                   key={title}
-                  className={`flex items-center justify-between bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 transition-colors duration-150 ${addedSuggestions.has(index) ? "border-[var(--accent-color)] opacity-50" : ""}`}
+                  className={`flex items-center justify-between bg-[#1f1f1f] border border-[#2a2a2a] rounded-lg px-3 py-2.5 transition-colors duration-150 ${addedSuggestions.has(index) ? "border-accent opacity-50" : ""}`}
                   data-title={title}
                 >
                   <span className="text-sm text-[#e6e6e6]">{title}</span>
                   <button
-                    className={`bg-transparent border border-[#333] rounded-lg text-[#888] text-xs font-inherit px-2.5 py-1 transition-all duration-150 whitespace-nowrap hover:border-[var(--accent-color)] hover:text-[var(--accent-color)] ${addedSuggestions.has(index) ? "border-[var(--accent-color)] text-[var(--accent-color)] pointer-events-none" : ""}`}
+                    className={`bg-transparent border border-[#333] rounded-lg text-[#888] text-xs font-inherit px-2.5 py-1 transition-all duration-150 whitespace-nowrap hover:border-accent hover:text-accent ${addedSuggestions.has(index) ? "border-accent text-accent pointer-events-none" : ""}`}
                     onClick={() => handleAddSuggestion(index, title)}
                   >
                     {addedSuggestions.has(index) ? "✓ Added" : "+ Add"}
@@ -409,7 +409,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
             </div>
             <button
               id="suggestions-done"
-              className="w-full bg-[var(--accent-color)] border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-[#42a5f5]"
+              className="w-full bg-accent border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
               onClick={handleSuggestionsDone}
             >
               Lets go

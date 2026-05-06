@@ -158,7 +158,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
           <div className="task-buttons-right">
             {showNext && (
               <motion.button
-                className="bg-transparent border-none text-[12px] px-1.5 py-1 rounded text-[var(--accent-color)] transition-colors duration-150 hover:bg-[var(--accent-color)]/12"
+                className="bg-transparent border-none text-[12px] px-1.5 py-1 rounded text-accent transition-colors duration-150 hover:bg-accent/12"
                 onClick={() => {
                   if (task.status === "active") {
                     onStatusChange(task.id, "inProgress");

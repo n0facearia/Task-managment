@@ -153,7 +153,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
               <button
                 id="create-task"
                 type="button"
-                className="inline-flex items-center justify-center px-3 py-1.5 border-none rounded-lg bg-[var(--accent-color)] text-[#1c1c1c] text-[13px] font-medium transition-colors duration-200 hover:bg-[#42a5f5]"
+                className="inline-flex items-center justify-center px-3 py-1.5 border-none rounded-lg bg-accent text-[#1c1c1c] text-[13px] font-medium transition-colors duration-200 hover:bg-accent-hover"
                 onClick={handleQuickCreate}
               >
                 + New Task

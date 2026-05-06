@@ -5,7 +5,12 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        accent: "var(--accent-color)",
+        "accent-hover": "#42a5f5",
+      },
+    },
   },
   plugins: [require("daisyui")],
 }
