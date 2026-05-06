@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import type { Task, TaskStatus } from "../context/TaskContext";
 import { CATEGORY_COLORS } from "../constants";
 
@@ -81,9 +81,11 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
       className="task"
       draggable
       data-task-id={task.id}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
+      layout
+      initial={{ opacity: 0, y: 8, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+      transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
     >
       {isEditingTitle ? (
         <input
@@ -125,7 +127,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
             />
           ) : (
             <motion.button
-              className="task-set-category-btn"
+              className="bg-transparent border border-dashed border-[#555] text-[#888] text-[11px] px-1.5 py-0.5 rounded cursor-pointer hover:border-[#888] hover:text-[#ccc]"
               onClick={() => onOpenDetail(task)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -138,7 +140,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
           <div className="task-buttons-left">
             {showBack && (
               <motion.button
-                className="btn-back"
+                className="bg-transparent border-none text-[12px] px-1.5 py-1 rounded text-[#666] transition-colors duration-150 hover:bg-white/10"
                 onClick={() => {
                   if (task.status === "inProgress") {
                     onStatusChange(task.id, "active");
@@ -156,7 +158,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
           <div className="task-buttons-right">
             {showNext && (
               <motion.button
-                className="btn-next"
+                className="bg-transparent border-none text-[12px] px-1.5 py-1 rounded text-[var(--accent-color)] transition-colors duration-150 hover:bg-[var(--accent-color)]/12"
                 onClick={() => {
                   if (task.status === "active") {
                     onStatusChange(task.id, "inProgress");

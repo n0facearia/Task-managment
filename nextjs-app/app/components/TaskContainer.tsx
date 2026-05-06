@@ -14,6 +14,13 @@ import { useTasks, type TaskStatus } from "../context/TaskContext";
 import { CATEGORY_COLORS } from "../constants";
 import { useToast } from "./Toast";
 
+const columnVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.1 },
+  },
+};
+
 interface TaskContainerProps {
   onLogout?: () => void;
 }
@@ -138,12 +145,17 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
     <DragDropHandler tasks={tasks} onStatusChange={setTaskStatus}>
       <div className="page-container" style={{ display: "flex" }}>
         <Header onLogout={handleLogout} />
-        <div className="kanban-board">
+        <motion.div className="kanban-board" variants={columnVariants} initial="hidden" animate="visible">
           <KanbanColumn
             title="Todo"
             id="todo-column"
             headerAction={
-              <button id="create-task" type="button" onClick={handleQuickCreate}>
+              <button
+                id="create-task"
+                type="button"
+                className="inline-flex items-center justify-center px-3 py-1.5 border-none rounded-lg bg-[var(--accent-color)] text-[#1c1c1c] text-[13px] font-medium transition-colors duration-200 hover:bg-[#42a5f5]"
+                onClick={handleQuickCreate}
+              >
                 + New Task
               </button>
             }
@@ -201,7 +213,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
               />
             ))}
           </KanbanColumn>
-        </div>
+        </motion.div>
         <Sidebar
           tasks={tasks}
           activeCategory={activeCategory}

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createContext, useContext } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface ToastMessage {
   id: number;
@@ -47,16 +48,25 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      <div id="toast-container">
-        {toasts.map((toast) => (
-          <div key={toast.id} className="toast">
-            <div className="toast-message">{toast.text}</div>
-            <div className="toast-bar-track">
-              <div className="toast-bar" />
-            </div>
-          </div>
-        ))}
-      </div>
+      <AnimatePresence>
+        <div id="toast-container">
+          {toasts.map((toast) => (
+            <motion.div
+              key={toast.id}
+              className="toast"
+              initial={{ opacity: 0, x: 40, scale: 0.96 }}
+              animate={{ opacity: 1, x: 0, scale: 1 }}
+              exit={{ opacity: 0, x: 40, scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 400, damping: 28 }}
+            >
+              <div className="toast-message">{toast.text}</div>
+              <div className="toast-bar-track">
+                <div className="toast-bar" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </AnimatePresence>
     </ToastContext.Provider>
   );
 }
