@@ -48,8 +48,8 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
   const toast = useToast();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("taskapp_user");
-    if (storedUser) {
+    const token = localStorage.getItem("authToken");
+    if (token) {
       setSplashVisible(false);
     }
   }, []);
@@ -76,22 +76,12 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
     setLoginError("");
 
     try {
-      const users = await api.fetchUsers();
-      const user = users.find((u) => u.username === username);
-      if (!user) {
-        setLoginError("Account not found");
-        return;
-      }
-      if (user.password !== password) {
-        setLoginError("Incorrect password");
-        return;
-      }
-
-      localStorage.setItem("taskapp_user", username);
+      await api.login(username, password);
       setSplashVisible(false);
       onAuthComplete();
-    } catch {
-      setLoginError("Something went wrong");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setLoginError(message);
     } finally {
       setLoading(false);
     }
@@ -102,11 +92,6 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
     const username = signupUsernameRef.current?.value.trim();
     const password = signupPasswordRef.current?.value;
     const confirm = signupConfirmRef.current?.value;
-
-    if (!username) {
-      setSignupError("Username is required");
-      return;
-    }
 
     if (!username || !password || !confirm) {
       setSignupError("Please fill in all fields");
@@ -122,26 +107,20 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
     setSignupError("");
 
     try {
-      const users = await api.fetchUsers();
-      if (users.some((u) => u.username === username)) {
-        setSignupError("Username taken, please log in");
-        return;
-      }
-
-      await api.createUser({ username, password });
+      await api.signup(username, password);
 
       await api.createTask({
         title: "Welcome",
         description: "Your first task. Click Next to move it forward.",
         status: "active",
-        username,
+        category: "",
       });
 
-      localStorage.setItem("taskapp_user", username);
       setAddedSuggestions(new Set());
       setPanel("suggestions");
-    } catch {
-      setSignupError("Something went wrong");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Something went wrong";
+      setSignupError(message);
     } finally {
       setLoading(false);
     }
@@ -150,15 +129,13 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
   const handleAddSuggestion = useCallback(
     async (index: number, title: string) => {
       if (addedSuggestions.has(index)) return;
-      const username = localStorage.getItem("taskapp_user");
-      if (!username) return;
 
       try {
         await api.createTask({
           title,
           description: "",
           status: "active",
-          username,
+          category: "",
         });
         setAddedSuggestions((prev) => new Set(prev).add(index));
       } catch {
@@ -174,7 +151,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
   }, [onAuthComplete]);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("taskapp_user");
+    api.logout();
     setSplashVisible(true);
     setPanel("landing");
     setLoginError("");

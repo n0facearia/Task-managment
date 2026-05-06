@@ -4,17 +4,31 @@ import { useCallback, useEffect, useState } from "react";
 import { TaskProvider } from "./context/TaskContext";
 import TaskContainer from "./components/TaskContainer";
 import AuthSplash from "./components/AuthSplash";
+import * as api from "./lib/api";
 
 export default function HomePage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem("taskapp_user");
-    if (storedUser) {
-      setIsAuthenticated(true);
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setIsAuthenticated(false);
+      setIsLoading(false);
+      return;
     }
-    setIsLoading(false);
+
+    api.fetchTasks()
+      .then(() => {
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        api.logout();
+        setIsAuthenticated(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   const handleAuthComplete = useCallback(() => {

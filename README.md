@@ -13,6 +13,7 @@ A Kanban-style task management application that allows users to create, organize
 - **Database**: SQLite (better-sqlite3)
 - **Styling**: Tailwind CSS + DaisyUI + Custom CSS (`globals.css`)
 - **Animations**: Framer Motion
+- **Authentication**: JWT (jsonwebtoken@9.0.2) with Bearer token
 
 ---
 
@@ -42,6 +43,13 @@ User Action → React State → API Request → Express Server → SQLite → Re
 - **React Context** (`TaskContext.tsx`): Centralized task state management
 - **Local Component State**: UI-specific state (editing modes, panel visibility)
 - **Optimistic Updates**: Tasks show immediately with temporary IDs, then reconcile with server response
+
+### Authentication
+
+- **JWT Tokens**: Stateless Bearer tokens (24h expiry) stored in `localStorage`
+- **Token Verification**: `page.tsx` validates token on mount via `fetchTasks()` call
+- **Auto-Logout**: 401 responses trigger token cleanup and redirect to login
+- **User Isolation**: All task queries scoped by `user_id` from token payload
 
 ---
 
@@ -73,12 +81,25 @@ The app was migrated **step-by-step** into Next.js:
    - Board now displays all 3 columns (Todo, Doing, Done) centered and fully visible
 
 8. **Interactive UI Enhancements** (2026-05):
-    - Added `HalftoneBackground.tsx`: Canvas-based interactive dot grid background
-    - Optimized canvas rendering with `requestAnimationFrame` + `needsRedraw` flag (idle = 0 CPU)
-    - Halftone specs: 12×14 dot spacing, 150px mouse radius, dots grow 1.5→4px, opacity 0.04→0.15
-    - Column hover float: `y: -4px`, shadow overlay, `z-index` stacking to overlap header
-    - Task hover float: `scale: 1.02`, `y: -2px`, shadow, fast transition
-    - Category sidebar buttons: same float effect with `duration: 0.15s` quick response
+     - Added `HalftoneBackground.tsx`: Canvas-based interactive dot grid background
+     - Optimized canvas rendering with `requestAnimationFrame` + `needsRedraw` flag (idle = 0 CPU)
+     - Halftone specs: 12×14 dot spacing, 150px mouse radius, dots grow 1.5→4px, opacity 0.04→0.15
+     - Column hover float: `y: -4px`, shadow overlay, `z-index` stacking to overlap header
+     - Task hover float: `scale: 1.02`, `y: -2px`, shadow, fast transition
+     - Category sidebar buttons: same float effect with `duration: 0.15s` quick response
+
+9. **JWT Authentication System** (2026-05):
+     - Replaced plaintext username auth with JWT Bearer tokens (`jsonwebtoken@9.0.2`)
+     - Added `/auth/signup` and `/auth/login` endpoints, removed `GET /users` and `POST /users`
+     - `authenticateToken` middleware on all `/tasks` routes — user data isolation by `user_id`
+     - Auto-migration: `user_id` column added to `tasks` table with backfill from `username`
+     - Frontend `api.ts` handles token storage, 401 auto-logout, and Bearer headers on every request
+     - `TaskItem` ref error fixed: wrapped with `motion.div` in `TaskContainer` for AnimatePresence compatibility
+
+10. **UI Refinements** (2026-05):
+     - Collapsible category sidebar: slides off-screen leaving 24px tab, smooth `0.3s` transition
+     - Removed `username` from Task interface — identity now derived entirely from JWT token
+     - Build passes cleanly with zero warnings
 
 ### Approach
 The migration followed an **incremental strategy**:
@@ -104,9 +125,10 @@ The migration followed an **incremental strategy**:
 - ✅ **Focus Views** - Double-click columns or categories for expanded view
 
 ### User System
-- ✅ **Authentication** - Signup and login with username/password
-- ✅ **Session Persistence** - Uses `localStorage` to remember logged-in user
-- ✅ **User-Specific Tasks** - Each user sees only their own tasks
+- ✅ **Authentication** - JWT signup and login with token-based sessions (24h expiry)
+- ✅ **Session Persistence** - Token stored in `localStorage`, verified on page mount
+- ✅ **User-Specific Tasks** - Each user sees only their own tasks (isolated by `user_id`)
+- ✅ **Auto-Logout** - Expired/invalid tokens trigger automatic logout and redirect
 
 ### UI Features
 - ✅ **Toast Notifications** - Temporary messages for user feedback
@@ -114,6 +136,7 @@ The migration followed an **incremental strategy**:
 - ✅ **Onboarding Suggestions** - Quick-start task suggestions after signup
 - ✅ **Interactive Halftone Background** - Canvas-based dot grid that reacts to mouse movement (idle = 0 CPU overhead)
 - ✅ **Hover Float Effects** - Kanban columns, task cards, and category sidebar buttons lift with subtle scale and drop shadow on hover
+- ✅ **Collapsible Sidebar** - Category sidebar slides off-screen leaving a 24px toggle tab (☰/◂)
 
 ---
 
@@ -182,14 +205,21 @@ task-creation-app/
 
 ## API Endpoints
 
+### Authentication
+
 | Method | Endpoint | Description |
 |--------|-----------|-------------|
-| GET | `/users` | List all users |
-| POST | `/users` | Create new user |
-| GET | `/tasks?username=X` | Fetch tasks for user |
+| POST | `/auth/signup` | Create new user, returns JWT token |
+| POST | `/auth/login` | Authenticate user, returns JWT token |
+
+### Tasks (all require `Authorization: Bearer <token>`)
+
+| Method | Endpoint | Description |
+|--------|-----------|-------------|
+| GET | `/tasks` | Fetch tasks for authenticated user |
 | POST | `/tasks` | Create new task |
-| PUT | `/tasks/:id` | Update task |
-| DELETE | `/tasks/:id` | Delete task |
+| PUT | `/tasks/:id` | Update task (must belong to user) |
+| DELETE | `/tasks/:id` | Delete task (must belong to user) |
 
 ---
 
@@ -200,8 +230,10 @@ The application has been tested and stabilized through multiple debugging cycles
 **Important**: The backend runs as a **separate process** from the frontend. Both must be running for full functionality.
 
 **Known Limitations**:
-- Passwords are stored in plaintext (no hashing implemented)
-- No authentication tokens - relies on `localStorage` username check
+- Passwords are stored in plaintext (no hashing implemented) — bcrypt planned
+- JWT tokens stored in `localStorage` (vulnerable to XSS) — httpOnly cookies planned
+- No refresh token mechanism (24h token expiry requires re-login)
+- No CORS origin restriction (currently allows all origins)
 - No advanced security hardening for production use
 
 ---
@@ -215,4 +247,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-05-06 (Interactive halftone background + hover float effects)
+2026-05-06 (JWT auth, collapsible sidebar, AnimatePresence fix)

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { CATEGORY_COLORS } from "../constants";
 
@@ -12,6 +12,8 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ tasks, activeCategory, onCategoryChange, onCategoryDblClick }: SidebarProps) {
+  const [collapsed, setCollapsed] = useState(false);
+
   const activeCategories = useMemo(() => {
     return Object.keys(CATEGORY_COLORS).filter((cat) =>
       tasks.some(
@@ -25,10 +27,19 @@ export default function Sidebar({ tasks, activeCategory, onCategoryChange, onCat
   return (
     <div
       id="category-sidebar"
-      style={{ transform: isVisible ? "translateX(0)" : undefined }}
+      className={collapsed ? "collapsed" : "open"}
+      style={{ transform: isVisible ? undefined : "translateX(-100%)" }}
     >
       <h3 id="sidebar-title">Categories</h3>
-      <div id="category-list">
+      <button
+        id="sidebar-toggle"
+        onClick={() => setCollapsed(!collapsed)}
+        title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+      >
+        {collapsed ? "☰" : "◂"}
+      </button>
+      <div id="sidebar-content">
+        <div id="category-list">
         <motion.button
           className={`category-filter-btn category-filter-all ${
             !activeCategory ? "active" : ""
@@ -68,6 +79,7 @@ export default function Sidebar({ tasks, activeCategory, onCategoryChange, onCat
             <span>{cat}</span>
             </motion.button>
         ))}
+      </div>
       </div>
     </div>
   );

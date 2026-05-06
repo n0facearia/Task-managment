@@ -77,17 +77,10 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
   const categoryColor = CATEGORY_COLORS[task.category];
 
   return (
-    <motion.div
+    <div
       className="task"
       draggable
       data-task-id={task.id}
-      layout
-      initial={{ opacity: 0, y: 8, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
-      transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
-      whileHover={{ scale: 1.02, y: -2, boxShadow: "0 8px 16px rgba(0, 0, 0, 0.3)", zIndex: 5 }}
-      style={{ position: "relative", zIndex: 0 }}
     >
       {isEditingTitle ? (
         <input
@@ -184,6 +177,6 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

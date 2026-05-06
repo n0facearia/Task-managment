@@ -18,7 +18,6 @@ export interface Task {
   title: string;
   description: string;
   status: TaskStatus;
-  username: string;
   category: string;
 }
 
@@ -108,8 +107,8 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   );
 
   const loadTasks = useCallback(() => {
-    const storedUser = localStorage.getItem("taskapp_user");
-    if (!storedUser) {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
       setLoading(false);
       return;
     }
@@ -117,21 +116,24 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setError(null);
 
-    api.fetchTasks(storedUser)
+    api.fetchTasks()
       .then((serverTasks) => {
         const mapped = serverTasks.map((t) => ({
           id: String(t.id),
           title: t.title || "",
           description: t.description || "",
           status: (t.status || "active") as TaskStatus,
-          username: t.username || storedUser,
           category: t.category || "",
         }));
         console.log("STATE_RESET loadTasks:", mapped);
         setTasks(mapped);
       })
       .catch((err) => {
-        setError(err.message);
+        if (err.message === "Session expired") {
+          setTasks([]);
+        } else {
+          setError(err.message);
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -144,8 +146,8 @@ export function TaskProvider({ children }: { children: ReactNode }) {
   }, [loadTasks]);
 
   const addTask = useCallback((title: string) => {
-    const storedUser = localStorage.getItem("taskapp_user");
-    if (!storedUser) return;
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
 
     const activeCount = tasks.filter((t) => t.status === "active").length;
     if (activeCount >= 20) return;
@@ -156,7 +158,6 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       title,
       description: "",
       status: "active",
-      username: storedUser,
       category: "",
     };
     setTasks((prev) => {
@@ -168,19 +169,19 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       title,
       description: "",
       status: "active",
-      username: storedUser,
+      category: "",
     })
       .then((saved) => {
         console.log("SET_TASKS addTask (server swap):", saved.id);
         setTasks((prev) =>
-          prev.map((t) => (t.id === tempId ? { ...t, id: String(saved.id), _isNew: true } : t)),
+          prev.map((t) => (t.id === tempId ? { ...t, id: String(saved.id) } : t)),
         );
       })
       .catch(() => {
         console.log("SET_TASKS addTask (rollback):", tempId);
         setTasks((prev) => prev.filter((t) => t.id !== tempId));
       });
-  }, []);
+  }, [tasks]);
 
   const deleteTask = useCallback((id: string) => {
     if (!id.startsWith("temp-")) {

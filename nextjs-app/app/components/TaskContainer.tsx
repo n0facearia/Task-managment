@@ -63,7 +63,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
   }, [tasks, addTask, toast]);
 
   function handleLogout() {
-    localStorage.removeItem("taskapp_user");
+    localStorage.removeItem("authToken");
     if (onLogout) {
       onLogout();
     } else {
@@ -165,14 +165,23 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
               <p className="kanban-empty">No tasks yet</p>
             )}
             {filteredActiveTasks.map((task) => (
-              <TaskItem
+              <motion.div
                 key={task.id}
-                task={task}
-                onDelete={deleteTask}
-                onStatusChange={setTaskStatus}
-                onOpenDetail={openTaskDetail}
-                onUpdate={handleTaskUpdate}
-              />
+                layout
+                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
+                style={{ position: "relative", zIndex: 0 }}
+              >
+                <TaskItem
+                  task={task}
+                  onDelete={deleteTask}
+                  onStatusChange={setTaskStatus}
+                  onOpenDetail={openTaskDetail}
+                  onUpdate={handleTaskUpdate}
+                />
+              </motion.div>
             ))}
           </KanbanColumn>
           <KanbanColumn
@@ -184,14 +193,23 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
               <p className="kanban-empty">No tasks in progress</p>
             )}
             {filteredInProgressTasks.map((task) => (
-              <TaskItem
+              <motion.div
                 key={task.id}
-                task={task}
-                onDelete={deleteTask}
-                onStatusChange={setTaskStatus}
-                onOpenDetail={openTaskDetail}
-                onUpdate={handleTaskUpdate}
-              />
+                layout
+                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
+                style={{ position: "relative", zIndex: 0 }}
+              >
+                <TaskItem
+                  task={task}
+                  onDelete={deleteTask}
+                  onStatusChange={setTaskStatus}
+                  onOpenDetail={openTaskDetail}
+                  onUpdate={handleTaskUpdate}
+                />
+              </motion.div>
             ))}
           </KanbanColumn>
           <KanbanColumn
@@ -203,14 +221,23 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
               <p className="kanban-empty">No completed tasks</p>
             )}
             {filteredCompletedTasks.map((task) => (
-              <TaskItem
+              <motion.div
                 key={task.id}
-                task={task}
-                onDelete={deleteTask}
-                onStatusChange={setTaskStatus}
-                onOpenDetail={openTaskDetail}
-                onUpdate={handleTaskUpdate}
-              />
+                layout
+                initial={{ opacity: 0, y: 8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95, transition: { duration: 0.15 } }}
+                transition={{ type: "spring", stiffness: 500, damping: 30, mass: 0.8 }}
+                style={{ position: "relative", zIndex: 0 }}
+              >
+                <TaskItem
+                  task={task}
+                  onDelete={deleteTask}
+                  onStatusChange={setTaskStatus}
+                  onOpenDetail={openTaskDetail}
+                  onUpdate={handleTaskUpdate}
+                />
+              </motion.div>
             ))}
           </KanbanColumn>
         </motion.div>
