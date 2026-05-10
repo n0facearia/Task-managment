@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import * as api from "../lib/api";
+import { CATEGORY_COLORS } from "../constants";
 
 export type TaskStatus = "active" | "inProgress" | "completed";
 
@@ -33,6 +34,7 @@ interface TaskContextValue {
   inProgressTasks: Task[];
   completedTasks: Task[];
   activeCategory: string;
+  themeColor: string;
   detailTask: Task | null;
   editingDraft: EditingDraft | null;
   loading: boolean;
@@ -45,6 +47,9 @@ interface TaskContextValue {
   openTaskDetail: (task: Task) => void;
   closeTaskDetail: () => void;
   retry: () => void;
+  clearTasks: () => void;
+  hideTasks: boolean;
+  setHideTasks: (value: boolean) => void;
 }
 
 const TaskContext = createContext<TaskContextValue>({
@@ -52,6 +57,7 @@ const TaskContext = createContext<TaskContextValue>({
   inProgressTasks: [],
   completedTasks: [],
   activeCategory: "",
+  themeColor: "#1e88e5",
   detailTask: null,
   editingDraft: null,
   loading: true,
@@ -64,19 +70,31 @@ const TaskContext = createContext<TaskContextValue>({
   openTaskDetail: () => {},
   closeTaskDetail: () => {},
   retry: () => {},
+  clearTasks: () => {},
+  hideTasks: false,
+  setHideTasks: () => {},
 });
 
 export function useTasks() {
   return useContext(TaskContext);
 }
 
+const DEFAULT_THEME = "#1e88e5";
+
 export function TaskProvider({ children }: { children: ReactNode }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [activeCategory, setActiveCategory] = useState("");
+  const [themeColor, setThemeColor] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("themeColor") || DEFAULT_THEME;
+    }
+    return DEFAULT_THEME;
+  });
   const [detailTask, setDetailTask] = useState<Task | null>(null);
   const [editingDraft, setEditingDraft] = useState<EditingDraft | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [hideTasks, setHideTasks] = useState(false);
 
   useEffect(() => {
     console.log("TASKS_STATE_CHANGED:", tasks.map(t => t.title));
@@ -152,13 +170,14 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     const activeCount = tasks.filter((t) => t.status === "active").length;
     if (activeCount >= 20) return;
 
+    const newCategory = activeCategory || "";
     const tempId = "temp-" + crypto.randomUUID();
     const temp: Task = {
       id: tempId,
       title,
       description: "",
       status: "active",
-      category: "",
+      category: newCategory,
     };
     setTasks((prev) => {
       console.log("SET_TASKS addTask (optimistic):", prev.length, "->", prev.length + 1, "tasks");
@@ -169,7 +188,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
       title,
       description: "",
       status: "active",
-      category: "",
+      category: newCategory,
     })
       .then((saved) => {
         console.log("SET_TASKS addTask (server swap):", saved.id);
@@ -181,7 +200,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         console.log("SET_TASKS addTask (rollback):", tempId);
         setTasks((prev) => prev.filter((t) => t.id !== tempId));
       });
-  }, [tasks]);
+  }, [tasks, activeCategory]);
 
   const deleteTask = useCallback((id: string) => {
     if (!id.startsWith("temp-")) {
@@ -216,6 +235,13 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const setActiveCategoryWithTheme = useCallback((cat: string | null) => {
+    setActiveCategory(cat ?? "");
+    const color = cat ? CATEGORY_COLORS[cat] || DEFAULT_THEME : DEFAULT_THEME;
+    setThemeColor(color);
+    localStorage.setItem("themeColor", color);
+  }, []);
+
   const openTaskDetail = useCallback((task: Task) => {
     setDetailTask(task);
     setEditingDraft({
@@ -231,6 +257,10 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     setEditingDraft(null);
   }, []);
 
+  const clearTasks = useCallback(() => {
+    setTasks([]);
+  }, []);
+
   return (
     <TaskContext.Provider
       value={{
@@ -238,6 +268,7 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         inProgressTasks,
         completedTasks,
         activeCategory,
+        themeColor,
         detailTask,
         editingDraft,
         loading,
@@ -247,9 +278,12 @@ export function TaskProvider({ children }: { children: ReactNode }) {
         deleteTask,
         setTaskStatus,
         updateTask,
-        setActiveCategory: (cat) => setActiveCategory(cat ?? ""),
+        setActiveCategory: setActiveCategoryWithTheme,
         openTaskDetail,
         closeTaskDetail,
+        clearTasks,
+        hideTasks,
+        setHideTasks,
       }}
     >
       {children}

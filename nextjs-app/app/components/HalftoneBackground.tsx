@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import { useTasks } from "../context/TaskContext";
 
 const DOT_SPACING_X = 12;
 const DOT_SPACING_Y = 14;
@@ -10,12 +11,22 @@ const MAX_RADIUS = 4;
 const BASE_OPACITY = 0.04;
 const MAX_OPACITY = 0.15;
 const BG_COLOR = "#1c1c1c";
+const RIPPLE_SPEED = 250;
+const RIPPLE_WIDTH = 50;
+
+interface CanvasRipple {
+  x: number;
+  y: number;
+  startTime: number;
+}
 
 export default function HalftoneBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const animFrameRef = useRef<number>(0);
   const needsRedrawRef = useRef(true);
+  const ripplesRef = useRef<CanvasRipple[]>([]);
+  const { themeColor } = useTasks();
 
   const drawHalftone = useCallback((canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
     const dpr = window.devicePixelRatio || 1;
@@ -36,6 +47,15 @@ export default function HalftoneBackground() {
     const { x: mx, y: my } = mouseRef.current;
     const cols = Math.ceil(w / DOT_SPACING_X) + 1;
     const rows = Math.ceil(h / DOT_SPACING_Y) + 1;
+    const now = performance.now();
+
+    // Clean up expired ripples
+    const maxDist = Math.sqrt(w * w + h * h);
+    ripplesRef.current = ripplesRef.current.filter((ripple) => {
+      const elapsed = (now - ripple.startTime) / 1000;
+      const currentRadius = elapsed * RIPPLE_SPEED;
+      return currentRadius < maxDist + RIPPLE_WIDTH;
+    });
 
     for (let row = 0; row < rows; row++) {
       for (let col = 0; col < cols; col++) {
@@ -56,16 +76,36 @@ export default function HalftoneBackground() {
           opacity = BASE_OPACITY + (MAX_OPACITY - BASE_OPACITY) * eased;
         }
 
-        ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+        for (const ripple of ripplesRef.current) {
+          const elapsed = (now - ripple.startTime) / 1000;
+          const currentRadius = elapsed * RIPPLE_SPEED;
+          const rdx = x - ripple.x;
+          const rdy = y - ripple.y;
+          const distToRipple = Math.sqrt(rdx * rdx + rdy * rdy);
+          const delta = Math.abs(distToRipple - currentRadius);
+          if (delta < RIPPLE_WIDTH) {
+            const intensity = 1 - delta / RIPPLE_WIDTH;
+            radius += (MAX_RADIUS - BASE_RADIUS) * intensity;
+            opacity += (MAX_OPACITY - BASE_OPACITY) * intensity * 2;
+          }
+        }
+
+        radius = Math.min(radius, MAX_RADIUS * 3);
+        opacity = Math.min(opacity, 0.6);
+
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = themeColor;
         ctx.beginPath();
         ctx.arc(x, y, radius, 0, Math.PI * 2);
         ctx.fill();
+        ctx.globalAlpha = 1;
       }
     }
-  }, []);
+  }, [themeColor]);
 
   const animate = useCallback(() => {
-    if (!needsRedrawRef.current) {
+    const hasRipples = ripplesRef.current.length > 0;
+    if (!needsRedrawRef.current && !hasRipples) {
       animFrameRef.current = requestAnimationFrame(animate);
       return;
     }
@@ -90,8 +130,14 @@ export default function HalftoneBackground() {
       needsRedrawRef.current = true;
     };
 
+    const handleClick = (e: MouseEvent) => {
+      ripplesRef.current.push({ x: e.clientX, y: e.clientY, startTime: performance.now() });
+      needsRedrawRef.current = true;
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", handleResize);
+    window.addEventListener("click", handleClick);
 
     const canvas = canvasRef.current;
     if (canvas) {
@@ -107,6 +153,7 @@ export default function HalftoneBackground() {
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("click", handleClick);
       cancelAnimationFrame(animFrameRef.current);
     };
   }, [animate, drawHalftone]);

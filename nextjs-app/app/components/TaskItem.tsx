@@ -58,19 +58,41 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
   }, [descDraft, task.id, task.title, task.description, onUpdate]);
 
   const handleTitleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === "Enter") saveTitle();
+    if (e.key === "Enter") {
+      const trimmed = titleDraft.trim();
+      if (!trimmed) {
+        setTitleError(true);
+        return;
+      }
+      setTitleError(false);
+      if (trimmed !== task.title) {
+        onUpdate(task.id, trimmed, task.description);
+      }
+      setIsEditingTitle(false);
+      setIsEditingDescription(true);
+    }
     if (e.key === "Escape") {
       setTitleDraft(task.title);
       setIsEditingTitle(false);
     }
-  }, [saveTitle, task.title]);
+  }, [titleDraft, task.id, task.title, task.description, onUpdate]);
 
   const handleDescKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      const trimmed = descDraft.trim();
+      if (trimmed !== task.description) {
+        onUpdate(task.id, task.title, trimmed);
+      } else {
+        setDescDraft(task.description);
+      }
+      setIsEditingDescription(false);
+    }
     if (e.key === "Escape") {
       setDescDraft(task.description);
       setIsEditingDescription(false);
     }
-  }, [task.description]);
+  }, [descDraft, task.id, task.title, task.description, onUpdate]);
 
   const showBack = task.status === "inProgress" || task.status === "completed";
   const showNext = task.status === "active" || task.status === "inProgress";
@@ -81,6 +103,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
       className="task"
       draggable
       data-task-id={task.id}
+      style={{ borderLeftColor: categoryColor || "#2a2a2a", borderLeftWidth: "4px" }}
     >
       {isEditingTitle ? (
         <input
@@ -122,6 +145,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
             />
           ) : (
             <motion.button
+              data-tutorial="open-detail"
               className="bg-transparent border border-dashed border-[#555] text-[#888] text-[11px] px-1.5 py-0.5 rounded cursor-pointer hover:border-[#888] hover:text-[#ccc]"
               onClick={() => onOpenDetail(task)}
               whileHover={{ scale: 1.05 }}
@@ -135,6 +159,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
           <div className="task-buttons-left">
             {showBack && (
               <motion.button
+                data-tutorial="task-back-status"
                 className="bg-transparent border-none text-[12px] px-1.5 py-1 rounded text-[#666] transition-colors duration-150 hover:bg-white/10"
                 onClick={() => {
                   if (task.status === "inProgress") {
@@ -153,6 +178,7 @@ export default function TaskItem({ task, onDelete, onStatusChange, onUpdate, onO
           <div className="task-buttons-right">
             {showNext && (
               <motion.button
+                data-tutorial="task-next-status"
                 className="bg-transparent border-none text-[12px] px-1.5 py-1 rounded text-accent transition-colors duration-150 hover:bg-accent/12"
                 onClick={() => {
                   if (task.status === "active") {

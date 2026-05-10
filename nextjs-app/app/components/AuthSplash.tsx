@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Logo from "./Logo";
 import * as api from "../lib/api";
-import { useToast } from "./Toast";
 
 type Panel = "landing" | "login" | "signup" | "suggestions";
 
@@ -37,6 +37,9 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
   const signupPasswordRef = useRef<HTMLInputElement>(null);
   const signupConfirmRef = useRef<HTMLInputElement>(null);
 
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showSignupConfirm, setShowSignupConfirm] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [signupError, setSignupError] = useState("");
   const [passwordChecks, setPasswordChecks] = useState({
@@ -44,8 +47,6 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
     capital: false,
     match: false,
   });
-
-  const toast = useToast();
 
   useEffect(() => {
     const token = localStorage.getItem("authToken");
@@ -109,14 +110,9 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
     try {
       await api.signup(username, password);
 
-      await api.createTask({
-        title: "Welcome",
-        description: "Your first task. Click Next to move it forward.",
-        status: "active",
-        category: "",
-      });
-
       setAddedSuggestions(new Set());
+      localStorage.setItem("isNewUser", "true");
+      localStorage.removeItem("tutorialCompleted");
       setPanel("suggestions");
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Something went wrong";
@@ -127,22 +123,15 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
   }, [loading, passwordChecks]);
 
   const handleAddSuggestion = useCallback(
-    async (index: number, title: string) => {
+    (index: number, title: string) => {
       if (addedSuggestions.has(index)) return;
 
-      try {
-        await api.createTask({
-          title,
-          description: "",
-          status: "active",
-          category: "",
-        });
-        setAddedSuggestions((prev) => new Set(prev).add(index));
-      } catch {
-        toast.showToast("Could not add suggestion");
-      }
+      const pending = JSON.parse(localStorage.getItem("pendingSuggestedTasks") || "[]");
+      pending.push({ title, description: "", status: "active", category: "" });
+      localStorage.setItem("pendingSuggestedTasks", JSON.stringify(pending));
+      setAddedSuggestions((prev) => new Set(prev).add(index));
     },
-    [addedSuggestions, toast],
+    [addedSuggestions],
   );
 
   const handleSuggestionsDone = useCallback(async () => {
@@ -152,6 +141,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
 
   const handleLogout = useCallback(() => {
     api.logout();
+    localStorage.removeItem("isNewUser");
     setSplashVisible(true);
     setPanel("landing");
     setLoginError("");
@@ -177,12 +167,12 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
       <AnimatePresence mode="wait">
         {panel === "landing" && (
           <motion.div key="landing" className="auth-panel" id="landing-panel" variants={panelVariants} initial="initial" animate="animate" exit="exit" transition={{ type: "spring", stiffness: 400, damping: 25 }}>
-            <div className="splash-logo"></div>
+            <Logo />
             <div className="splash-title">Task App</div>
             <div className="flex flex-col items-center gap-2.5 w-full mt-2">
               <button
                 id="btn-goto-signup"
-                className="w-full py-2.5 border-none rounded-lg bg-accent text-[#1c1c1c] text-sm font-semibold font-inherit transition-colors duration-150 hover:bg-accent-hover"
+                className="w-full py-2.5 border-none rounded-lg bg-accent text-white text-sm font-semibold font-inherit transition-colors duration-150 hover:bg-accent-hover"
                 onClick={() => setPanel("signup")}
               >
                 Sign Up
@@ -213,33 +203,41 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
               <input
                 ref={signupPasswordRef}
                 id="signup-password"
-                type="password"
+                type={showSignupPassword ? "text" : "password"}
                 placeholder="Password"
                 className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
                 onChange={(e) =>
                   validatePassword(e.target.value, signupConfirmRef.current?.value || "")
                 }
               />
-              <button
+              <motion.button
                 type="button"
                 className="toggle-password"
-                onClick={(e) => {
-                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                  if (input) {
-                    input.type = input.type === "password" ? "text" : "password";
-                    (e.currentTarget as HTMLButtonElement).textContent =
-                      input.type === "password" ? "Show" : "Hide";
-                  }
-                }}
+                onClick={() => setShowSignupPassword((prev) => !prev)}
+                whileTap={{ scale: 0.8 }}
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
               >
-                Show
-              </button>
+                {showSignupPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </motion.button>
             </div>
             <div className="password-wrapper">
               <input
                 ref={signupConfirmRef}
                 id="signup-confirm"
-                type="password"
+                type={showSignupConfirm ? "text" : "password"}
                 placeholder="Confirm password"
                 className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
                 onChange={(e) =>
@@ -249,20 +247,28 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
                   if (e.key === "Enter") handleSignup();
                 }}
               />
-              <button
+              <motion.button
                 type="button"
                 className="toggle-password"
-                onClick={(e) => {
-                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                  if (input) {
-                    input.type = input.type === "password" ? "text" : "password";
-                    (e.currentTarget as HTMLButtonElement).textContent =
-                      input.type === "password" ? "Show" : "Hide";
-                  }
-                }}
+                onClick={() => setShowSignupConfirm((prev) => !prev)}
+                whileTap={{ scale: 0.8 }}
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
               >
-                Show
-              </button>
+                {showSignupConfirm ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </motion.button>
             </div>
             <ul className="list-none p-0 m-0 w-full flex flex-col gap-1">
               <li id="rule-length" className={`text-xs relative transition-colors duration-150 flex items-center gap-2 ${passwordChecks.length ? "text-[#66bb6a]" : "text-[#555]"}`}>
@@ -283,7 +289,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
             </span>
             <button
               id="signup-submit"
-              className="w-full bg-accent border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
+              className="w-full bg-accent border-none rounded-lg text-white text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
               onClick={handleSignup}
               disabled={loading}
             >
@@ -317,34 +323,42 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
               <input
                 ref={loginPasswordRef}
                 id="login-password"
-                type="password"
+                type={showLoginPassword ? "text" : "password"}
                 placeholder="Password"
                 className="w-full pr-16 bg-[#1f1f1f] border border-[#333] rounded-lg px-3 py-2.5 text-[#e6e6e6] text-sm font-inherit outline-none box-border transition-colors duration-150 focus:border-accent"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") handleLogin();
                 }}
               />
-              <button
+              <motion.button
                 type="button"
                 className="toggle-password"
-                onClick={(e) => {
-                  const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                  if (input) {
-                    input.type = input.type === "password" ? "text" : "password";
-                    (e.currentTarget as HTMLButtonElement).textContent =
-                      input.type === "password" ? "Show" : "Hide";
-                  }
-                }}
+                onClick={() => setShowLoginPassword((prev) => !prev)}
+                whileTap={{ scale: 0.8 }}
+                whileHover={{ scale: 1.1 }}
+                transition={{ type: "spring", stiffness: 500, damping: 15 }}
               >
-                Show
-              </button>
+                {showLoginPassword ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
+                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
+                    <line x1="1" y1="1" x2="23" y2="23" />
+                    <path d="M14.12 14.12a3 3 0 1 1-4.24-4.24" />
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                )}
+              </motion.button>
             </div>
             <span id="login-error" className="text-xs text-[#e57373] m-0 min-h-[16px] text-center block w-full">
               {loginError}
             </span>
             <button
               id="login-submit"
-              className="w-full bg-accent border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
+              className="w-full bg-accent border-none rounded-lg text-white text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
               onClick={handleLogin}
               disabled={loading}
             >
@@ -386,7 +400,7 @@ export default function AuthSplash({ onAuthComplete }: AuthSplashProps) {
             </div>
             <button
               id="suggestions-done"
-              className="w-full bg-accent border-none rounded-lg text-[#1c1c1c] text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
+              className="w-full bg-accent border-none rounded-lg text-white text-sm font-semibold font-inherit py-2.5 transition-colors duration-150 hover:bg-accent-hover"
               onClick={handleSuggestionsDone}
             >
               Lets go

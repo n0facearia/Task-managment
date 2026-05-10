@@ -11,8 +11,10 @@ import CategoryFocusView from "./CategoryFocusView";
 import ColumnFocusView from "./ColumnFocusView";
 import DragDropHandler from "./DragDropHandler";
 import { useTasks, type TaskStatus } from "../context/TaskContext";
+import { useTutorial } from "../context/TutorialContext";
 import { CATEGORY_COLORS } from "../constants";
 import { useToast } from "./Toast";
+import HalftoneBackground from "./HalftoneBackground";
 
 const columnVariants = {
   hidden: {},
@@ -28,8 +30,6 @@ interface TaskContainerProps {
 export default function TaskContainer({ onLogout }: TaskContainerProps) {
   const {
     tasks,
-    inProgressTasks,
-    completedTasks,
     activeCategory,
     detailTask,
     editingDraft,
@@ -45,9 +45,16 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
     closeTaskDetail,
   } = useTasks();
 
+  const { isTutorialActive, demoTaskId } = useTutorial();
   const [categoryFocus, setCategoryFocus] = useState<string | null>(null);
   const [columnFocus, setColumnFocus] = useState<TaskStatus | null>(null);
   const toast = useToast();
+
+  const renderTasks = isTutorialActive
+    ? demoTaskId
+      ? tasks.filter((t) => t.id === demoTaskId)
+      : []
+    : tasks;
 
   const handleTaskUpdate = useCallback((id: string, title: string, description: string) => {
     updateTask(id, { id, title, description, category: tasks.find((t) => t.id === id)?.category || "" });
@@ -71,19 +78,21 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
     }
   }
 
-  const activeTasks = tasks.filter((t) => t.status === "active");
+  const activeTasks = renderTasks.filter((t) => t.status === "active");
+  const renderInProgressTasks = renderTasks.filter((t) => t.status === "inProgress");
+  const renderCompletedTasks = renderTasks.filter((t) => t.status === "completed");
 
   const filteredInProgressTasks = activeCategory
-    ? inProgressTasks.filter(
+    ? renderInProgressTasks.filter(
         (t) => t.category.toLowerCase() === activeCategory.toLowerCase(),
       )
-    : inProgressTasks;
+    : renderInProgressTasks;
 
   const filteredCompletedTasks = activeCategory
-    ? completedTasks.filter(
+    ? renderCompletedTasks.filter(
         (t) => t.category.toLowerCase() === activeCategory.toLowerCase(),
       )
-    : completedTasks;
+    : renderCompletedTasks;
 
   const filteredActiveTasks = activeCategory
     ? activeTasks.filter(
@@ -93,11 +102,11 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
 
   const columnTasks = useCallback(
     (status: TaskStatus) => {
-      const base = tasks.filter((t) => t.status === status);
+      const base = renderTasks.filter((t) => t.status === status);
       if (!activeCategory) return base;
       return base.filter((t) => t.category.toLowerCase() === activeCategory.toLowerCase());
     },
-    [tasks, activeCategory],
+    [renderTasks, activeCategory],
   );
 
   const handleColumnDblClick = useCallback((status: TaskStatus) => {
@@ -142,7 +151,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
   }
 
   return (
-    <DragDropHandler tasks={tasks} onStatusChange={setTaskStatus}>
+    <DragDropHandler tasks={renderTasks} onStatusChange={setTaskStatus}>
       <div className="page-container" style={{ display: "flex" }}>
         <Header onLogout={handleLogout} />
         <motion.div className="kanban-board" variants={columnVariants} initial="hidden" animate="visible">
@@ -153,7 +162,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
               <button
                 id="create-task"
                 type="button"
-                className="inline-flex items-center justify-center px-3 py-1.5 border-none rounded-lg bg-accent text-[#1c1c1c] text-[13px] font-medium transition-colors duration-200 hover:bg-accent-hover"
+                className="inline-flex items-center justify-center px-3 py-1.5 border-none rounded-lg bg-accent text-white text-[13px] font-medium transition-colors duration-200 hover:bg-accent-hover"
                 onClick={handleQuickCreate}
               >
                 + New Task
@@ -242,7 +251,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
           </KanbanColumn>
         </motion.div>
         <Sidebar
-          tasks={tasks}
+          tasks={renderTasks}
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
           onCategoryDblClick={setCategoryFocus}
@@ -255,7 +264,7 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
         />
         <CategoryFocusView
           category={categoryFocus}
-          tasks={tasks.filter(
+          tasks={renderTasks.filter(
             (t) => t.category.toLowerCase() === categoryFocus?.toLowerCase(),
           )}
           onClose={() => setCategoryFocus(null)}

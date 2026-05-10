@@ -1,5 +1,5 @@
 export const CATEGORY_COLORS: Record<string, string> = {
-  Work: "#4A90D9",
+  Work: "#38BDF8",
   Personal: "#7ED67E",
   Health: "#E8734A",
   Learning: "#9B6DD6",

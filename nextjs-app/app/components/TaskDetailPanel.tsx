@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { Task, EditingDraft } from "../context/TaskContext";
 import { CATEGORY_COLORS } from "../constants";
@@ -16,6 +16,8 @@ export default function TaskDetailPanel({ detailTask, editingDraft, onUpdateTask
   const [title, setTitle] = useState(editingDraft?.title ?? "");
   const [description, setDescription] = useState(editingDraft?.description ?? "");
   const [category, setCategory] = useState(editingDraft?.category ?? "");
+  const descRef = useRef<HTMLTextAreaElement>(null);
+  const doneRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (editingDraft) {
@@ -53,15 +55,28 @@ export default function TaskDetailPanel({ detailTask, editingDraft, onUpdateTask
               placeholder="Task title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  descRef.current?.focus();
+                }
+              }}
             />
           </div>
           <div className="task-detail-field">
             <label htmlFor="task-detail-description">Description</label>
             <textarea
+              ref={descRef}
               id="task-detail-description"
               placeholder="Add a description..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  doneRef.current?.focus();
+                }
+              }}
             />
           </div>
           <div className="task-detail-field">
@@ -70,6 +85,7 @@ export default function TaskDetailPanel({ detailTask, editingDraft, onUpdateTask
               {Object.entries(CATEGORY_COLORS).map(([cat, color]) => (
                 <button
                   key={cat}
+                  data-tutorial="category-option"
                   className={`category-option ${category === cat ? "selected" : ""}`}
                   onClick={() => setCategory(category === cat ? "" : cat)}
                 >
@@ -87,7 +103,9 @@ export default function TaskDetailPanel({ detailTask, editingDraft, onUpdateTask
               Cancel
             </button>
             <button
+              ref={doneRef}
               id="task-detail-done"
+              data-tutorial="edit-task-done"
               onClick={() => {
                 onUpdateTask(detailTask.id, {
                   id: detailTask.id,

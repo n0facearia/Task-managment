@@ -1,9 +1,13 @@
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --accent-color: #1e88e5;
+  --theme-color: #1e88e5;
 }
 *,
 *::before,
@@ -45,7 +49,7 @@ body {
   width: 28px;
   height: 28px;
   border-radius: 6px;
-  background: var(--accent-color);
+  background: var(--theme-color);
 }
 
 .splash-title {
@@ -56,7 +60,7 @@ body {
 }
 
 .landing-buttons #btn-goto-signup:hover {
-  background: #42a5f5;
+  background: var(--theme-color);
 }
 
 .landing-buttons #btn-goto-login {
@@ -99,24 +103,24 @@ body {
 }
 
 .auth-panel input:focus {
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
 }
 
 .auth-btn-primary {
   width: 100%;
-  background: var(--accent-color);
+  background: var(--theme-color);
   border: none;
   border-radius: 8px;
-  color: #1c1c1c;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   font-family: inherit;
   padding: 10px;
-  transition: background 150ms ease;
+  transition: background 0.3s ease;
 }
 
 .auth-btn-primary:hover {
-  background: #42a5f5;
+  background: var(--theme-color);
 }
 
 .auth-btn-secondary {
@@ -219,7 +223,8 @@ h1 {
   font-size: 16px;
   font-weight: 600;
   margin: 0 0 16px;
-  color: var(--accent-color);
+  color: var(--theme-color);
+  transition: color 0.3s ease;
 }
 #create-task {
   display: inline-flex;
@@ -228,14 +233,14 @@ h1 {
   padding: 6px 12px;
   border: none;
   border-radius: 8px;
-  background: var(--accent-color);
-  color: #1c1c1c;
+  background: var(--theme-color);
+  color: #ffffff;
   font-size: 13px;
   font-weight: 500;
-  transition: background 200ms ease;
+  transition: background 0.3s ease;
 }
 #create-task:hover {
-  background: #42a5f5;
+  background: var(--theme-color);
 }
 .task {
   background: #1f1f1f;
@@ -270,7 +275,7 @@ h1 {
 .task-title-edit {
   font-size: 14px;
   font-weight: 500;
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
 }
 .task-title-edit.error {
   border-color: #e57373;
@@ -281,7 +286,7 @@ h1 {
 .task-description-edit {
   font-size: 13px;
   color: #999;
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
   min-height: 60px;
   resize: vertical;
   width: 100%;
@@ -298,7 +303,7 @@ h1 {
 }
 .task input:focus,
 .task textarea:focus {
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
 }
 .task > div:first-child {
   font-size: 14px;
@@ -411,7 +416,7 @@ body {
 }
 
 .kanban-column.drag-over {
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
 }
 
 .kanban-column-header {
@@ -465,7 +470,7 @@ body {
   width: 32px;
   height: 32px;
   border: 3px solid #333;
-  border-top-color: var(--accent-color);
+  border-top-color: var(--theme-color);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -490,20 +495,20 @@ body {
 }
 
 .retry-button {
-  background: var(--accent-color);
+  background: var(--theme-color);
   border: none;
   border-radius: 8px;
-  color: #1c1c1c;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 500;
   font-family: inherit;
   padding: 8px 20px;
   cursor: pointer;
-  transition: background 150ms ease;
+  transition: background 0.3s ease;
 }
 
 .retry-button:hover {
-  background: #42a5f5;
+  background: var(--theme-color);
 }
 
 #doing-column .task {
@@ -543,7 +548,8 @@ body {
 }
 
 .btn-next {
-  color: var(--accent-color);
+  color: var(--theme-color);
+  transition: color 0.3s ease, background 150ms ease;
 }
 
 .btn-next:hover,
@@ -647,7 +653,7 @@ body {
 }
 
 .suggestion-item.added {
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
   opacity: 0.5;
 }
 
@@ -669,13 +675,13 @@ body {
 }
 
 .suggestion-add-btn:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
+  border-color: var(--theme-color);
+  color: var(--theme-color);
 }
 
 .suggestion-item.added .suggestion-add-btn {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
+  border-color: var(--theme-color);
+  color: var(--theme-color);
   pointer-events: none;
 }
 
@@ -743,13 +749,14 @@ body {
 }
 
 #tutorial-next {
-  background: var(--accent-color);
+  background: var(--theme-color);
   border: none;
   color: white;
   padding: 8px 20px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
+  transition: background 0.3s ease;
 }
 
 #tutorial-next:hover {
@@ -946,13 +953,14 @@ body {
 }
 
 #task-detail-done {
-  background: var(--accent-color);
+  background: var(--theme-color);
   border: none;
-  color: white;
+  color: #ffffff;
   padding: 8px 20px;
   border-radius: 6px;
   cursor: pointer;
   font-size: 13px;
+  transition: background 0.3s ease;
 }
 
 #task-detail-done:hover {
@@ -1060,9 +1068,10 @@ body {
 }
 
 .category-filter-btn.active {
-  border-color: var(--accent-color);
+  border-color: var(--theme-color);
   color: #e6e6e6;
   background: #2e2e2e;
+  transition: border-color 0.3s ease;
 }
 
 /* Adjust main content to account for sidebar */
@@ -1362,4 +1371,224 @@ body {
   color: #ccc;
 }
 
+/* ── TUTORIAL OVERLAY ── */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.tutorial-spotlight {
+  position: fixed;
+  border-radius: 8px;
+  border: 2px solid var(--theme-color);
+  box-shadow:
+    0 0 0 9999px rgba(0, 0, 0, 0.65),
+    0 0 20px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+  transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.tutorial-block-panel {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+}
+
+.tutorial-block-top {
+  left: 0;
+  right: 0;
+  top: 0;
+}
+
+.tutorial-block-bottom {
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.tutorial-block-left {
+  left: 0;
+}
+
+.tutorial-block-right {
+  right: 0;
+}
+
+/* ── TUTORIAL TOOLTIP ── */
+.tutorial-tooltip-wrapper {
+  position: fixed;
+  pointer-events: auto;
+}
+
+.tutorial-tooltip {
+  position: relative;
+  max-width: 320px;
+  min-width: 240px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  padding: 16px 18px;
+  color: #e6e6e6;
+}
+
+.tutorial-tooltip-arrow {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  transform: rotate(45deg);
+}
+
+.tooltip-bottom .tutorial-tooltip-arrow {
+  top: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  border-left: none;
+  border-bottom: none;
+}
+
+.tooltip-top .tutorial-tooltip-arrow {
+  bottom: -7px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  border-right: none;
+  border-top: none;
+}
+
+.tooltip-left .tutorial-tooltip-arrow {
+  right: -7px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  border-left: none;
+  border-bottom: none;
+}
+
+.tooltip-right .tutorial-tooltip-arrow {
+  left: -7px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  border-right: none;
+  border-top: none;
+}
+
+.tutorial-tooltip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tutorial-progress {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tutorial-tooltip-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.tutorial-tooltip-desc {
+  font-size: 13px;
+  color: #aaa;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.tutorial-tooltip-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  gap: 8px;
+}
+
+.tutorial-tooltip-hint {
+  font-size: 11px;
+  color: #666;
+}
+
+.tutorial-tooltip-next-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-tooltip-next {
+  background: var(--theme-color);
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.tutorial-tooltip-next:hover {
+  filter: brightness(1.15);
+  transform: translateY(-1px);
+}
+
+.tutorial-tooltip-next:active {
+  transform: translateY(0);
+}
+
+.tutorial-tooltip-skip {
+  background: none;
+  border: 1px solid #444;
+  border-radius: 6px;
+  color: #888;
+  font-size: 12px;
+  font-family: inherit;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 150ms ease;
+  white-space: nowrap;
+}
+
+.tutorial-tooltip-skip:hover {
+  border-color: #666;
+  color: #ccc;
+  background: #333;
+}
+
+
+
+/* ── TUTORIAL RESPONSIVE ── */
+@media (max-width: 640px) {
+  .tutorial-tooltip {
+    max-width: 90vw;
+    min-width: unset;
+    padding: 12px 14px;
+  }
+
+  .tutorial-tooltip-title {
+    font-size: 14px;
+  }
+
+  .tutorial-tooltip-desc {
+    font-size: 12px;
+  }
+
+  .tutorial-tooltip-hint {
+    font-size: 10px;
+  }
+
+  .tutorial-tooltip-skip {
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+}
 
