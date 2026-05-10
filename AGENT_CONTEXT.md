@@ -39,10 +39,11 @@ This is a **task management system** (Kanban-style) that allows users to:
 | `components/TaskContainer.tsx` | Main kanban board container |
 | `components/TaskItem.tsx` | Individual task card |
 | `components/AuthSplash.tsx` | Login/signup UI + suggested tasks |
+| `components/Logo.tsx` | Reusable logo with hover scale + tick draw animation |
 | `components/TutorialOverlay.tsx` | Tutorial overlay with spotlight and tooltip |
 | `components/TutorialTooltip.tsx` | Tutorial instruction card |
 | `components/TutorialAnimation.tsx` | Animated demos (pulse, drag, click, type) |
-| `components/Header.tsx` | App header with help button to restart tutorial |
+| `components/Header.tsx` | App header with tutorial button to restart tutorial |
 | `hooks/useTutorialActionDetector.ts` | Detects user actions to advance tutorial steps |
 | `data/tutorialSteps.ts` | Tutorial step definitions (10 steps) |
 | `lib/api.ts` | API wrapper functions |
@@ -99,11 +100,15 @@ UI Re-render (React)
 - ✅ **Sidebar** - Category filter with visibility toggle and collapsible state (slides off-screen leaving 24px toggle tab)
 - ✅ **Focus Views** - Double-click column/category for expanded view
 - ✅ **Toast Notifications** - Temporary messages for user feedback
-- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Help button)
+- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Tutorial button)
 - ✅ **Onboarding Suggestions** - Suggested tasks shown after signup before entering board
 - ✅ **Dynamic Theme** - App theme color changes to match selected category, reverts to default blue on "All"
 - ✅ **Interactive Halftone Background** - Canvas-based dot grid reacting to mouse movement (idle = 0 CPU overhead)
 - ✅ **Hover Float Effects** - Kanban columns, task cards, and category sidebar buttons lift with scale/shadow on hover
+- ✅ **Inherit Active Category on Quick Create** - New tasks created while a category filter is active automatically get that category assigned
+- ✅ **Dynamic Category Color Borders** - Task cards display a 4px left border matching their category's color (falls back to default border color for uncategorized tasks)
+- ✅ **Logo Component with Hover Animation** - Reusable Logo component with box scale-up and thick black checkmark drawn via Framer Motion `pathLength` on hover
+- ✅ **Halftone Click Ripple** - Canvas dot grid emits a ripple wave on click — dots swell and brighten as the ring passes; multiple simultaneous ripples supported
 
 ### NOT Implemented (do not assume existence):
 - ❌ Task search/filtering by title
@@ -177,6 +182,29 @@ UI Re-render (React)
     - Help button in header to restart tutorial anytime
 
 11. **Final state**: React-driven UI with Express backend, DaisyUI styling, Framer Motion animations, JWT auth, interactive tutorial
+
+12. **Category-Aware Quick Create** (2026-05):
+    - `TaskContext.addTask()` now reads `activeCategory` from context to assign the matching category to new tasks
+    - When "All" is selected (`activeCategory = ""`), new tasks get `category: ""` (preserving legacy behavior)
+
+13. **Dynamic Category Color Borders** (2026-05):
+    - Task cards in `TaskItem.tsx` apply a 4px left border colored via inline `style` using `CATEGORY_COLORS[task.category]`
+    - Fallback to existing card border color `#2a2a2a` for tasks with no category
+
+14. **Logo Component with Hover Tick Animation** (2026-05):
+    - Extracted blue box from AuthSplash.tsx into reusable `Logo.tsx` component (28×28px, `var(--theme-color)` background)
+    - Placed in AuthSplash.tsx (replacing inline div) and Header.tsx (before app title)
+    - Hover: box scales to 1.1 via Framer Motion spring, thick black checkmark draws in via `motion.path` with `pathLength` 0→1
+
+15. **"Help" Button Renamed to "Tutorial"** (2026-05):
+    - Label text changed from "Help" to "Tutorial" in Header.tsx — no logic changes
+
+16. **Halftone Click Ripple Effect** (2026-05):
+    - Added click ripple wave to HalftoneBackground.tsx: dots swell and brighten as a ring passes through them
+    - Ripple speed: 250px/s, band width: 50px, expires past canvas diagonal
+    - Multiple simultaneous ripples supported via `ripplesRef` array
+    - Integrated into existing `requestAnimationFrame` loop — no second loop added
+    - Click listener on `window` (canvas has `pointerEvents: none`)
 
 ---
 
@@ -256,6 +284,7 @@ task-creation-app/
 │   ├── app/
 │   │   ├── components/             # React components
 │   │   │   ├── AuthSplash.tsx       # Login/signup with JWT
+│   │   │   ├── Logo.tsx             # Reusable logo with hover tick animation
 │   │   │   ├── TaskContainer.tsx    # Main kanban board
 │   │   │   ├── TaskItem.tsx         # Individual task card
 │   │   │   ├── KanbanColumn.tsx     # Column container
@@ -264,7 +293,7 @@ task-creation-app/
 │   │   │   ├── DragDropHandler.tsx  # Drag-and-drop logic
 │   │   │   ├── CategoryFocusView.tsx
 │   │   │   ├── ColumnFocusView.tsx
-│   │   │   ├── Header.tsx           # Header with Help button
+│   │   │   ├── Header.tsx           # Header with Tutorial button
 │   │   │   ├── Toast.tsx
 │   │   │   ├── HalftoneBackground.tsx  # Interactive canvas background
 │   │   │   ├── ThemeProvider.tsx    # Dynamic theme switching
@@ -297,4 +326,4 @@ task-creation-app/
 
 **Last Updated**: 2026-05-10
 **Agent**: AI Assistant (big-pickle model)
-**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, interactive tutorial system, animated eye icons for password toggle, Enter-chained focus flow in TaskDetailPanel
+**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, interactive tutorial system, animated eye icons for password toggle, Enter-chained focus flow in TaskDetailPanel, category-inheriting quick create, category-colored task card borders, Logo with hover tick animation, halftone click ripple

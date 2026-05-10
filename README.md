@@ -97,9 +97,30 @@ The app was migrated **step-by-step** into Next.js:
      - `TaskItem` ref error fixed: wrapped with `motion.div` in `TaskContainer` for AnimatePresence compatibility
 
 10. **UI Refinements** (2026-05):
-     - Collapsible category sidebar: slides off-screen leaving 24px tab, smooth `0.3s` transition
-     - Removed `username` from Task interface — identity now derived entirely from JWT token
-     - Build passes cleanly with zero warnings
+      - Collapsible category sidebar: slides off-screen leaving 24px tab, smooth `0.3s` transition
+      - Removed `username` from Task interface — identity now derived entirely from JWT token
+      - Build passes cleanly with zero warnings
+
+11. **Logo Component with Hover Tick Animation** (2026-05):
+      - Extracted blue box from AuthSplash.tsx into reusable `Logo.tsx` component
+      - Placed Logo in AuthSplash.tsx and Header.tsx
+      - Hover animation: box scales up and a thick black checkmark draws in via Framer Motion `pathLength` 0→1
+
+12. **"Help" Button Renamed to "Tutorial"** (2026-05):
+      - Label text changed from "Help" to "Tutorial" in Header.tsx
+      - No logic changes — click handler, styling, and tutorial functionality preserved
+
+13. **Halftone Click Ripple Effect** (2026-05):
+      - Added click ripple wave to HalftoneBackground.tsx
+      - Ripple travels outward at ~250px/s, dots swell and brighten as the ring passes
+      - Multiple simultaneous ripples supported via array storage
+      - Ripples expire when radius exceeds canvas diagonal
+      - Integrated into existing `requestAnimationFrame` loop
+
+14. **Custom Cursor Attempt** (2026-05):
+      - CustomCursor.tsx was briefly created (white circle cursor + click ripple ring) then removed
+      - `cursor: none` was added to `globals.css` then reverted
+      - Default system cursor restored — no custom cursor remains
 
 ### Approach
 The migration followed an **incremental strategy**:
@@ -131,15 +152,17 @@ The migration followed an **incremental strategy**:
 - ✅ **Auto-Logout** - Expired/invalid tokens trigger automatic logout and redirect
 
 ### UI Features
-- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Help button)
+- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Tutorial button)
 - ✅ **Onboarding** - Welcome task and suggested tasks after signup
-- ✅ **Help System** - Restart tutorial anytime from Help button in header
+- ✅ **Help System** - Restart tutorial anytime from Tutorial button in header
 - ✅ **Dynamic Theme** - App theme color changes to match selected category
 - ✅ **Toast Notifications** - Temporary messages for user feedback
 - ✅ **Loading States** - Visual feedback during API operations
 - ✅ **Interactive Halftone Background** - Canvas-based dot grid that reacts to mouse movement (idle = 0 CPU overhead)
 - ✅ **Hover Float Effects** - Kanban columns, task cards, and category sidebar buttons lift with subtle scale and drop shadow on hover
 - ✅ **Collapsible Sidebar** - Category sidebar slides off-screen leaving a 24px toggle tab (☰/◂)
+- ✅ **Logo with Hover Animation** - Reusable Logo component with scale-up and animated thick black checkmark drawn via Framer Motion on hover
+- ✅ **Halftone Click Ripple** - Canvas dot grid emits a ripple wave on click — dots swell and brighten as the ring passes through them
 
 ---
 
@@ -151,6 +174,7 @@ task-creation-app/
 │   ├── app/
 │   │   ├── components/       # React components
 │   │   │   ├── AuthSplash.tsx
+│   │   │   ├── Logo.tsx
 │   │   │   ├── TaskContainer.tsx
 │   │   │   ├── TaskItem.tsx
 │   │   │   ├── KanbanColumn.tsx
@@ -260,4 +284,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-05-10 (JWT auth, collapsible sidebar, AnimatePresence fix, tutorial system, halftone background, dynamic theme, animated eye icons, Enter-chained focus flow, 16-step tutorial)
+2026-05-10 (Logo component, Tutorial rename, halftone click ripple, category-aware quick-create, dynamic color borders, JWT auth, collapsible sidebar, AnimatePresence fix, tutorial system, halftone background, dynamic theme, animated eye icons, Enter-chained focus flow, 16-step tutorial)
