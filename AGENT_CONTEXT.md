@@ -14,6 +14,7 @@ This is a **task management system** (Kanban-style) that allows users to:
 - **Database**: SQLite (better-sqlite3)
 - **Styling**: Tailwind CSS + DaisyUI + Custom CSS (`globals.css`)
 - **Animations**: Framer Motion
+- **Authentication**: JWT (jsonwebtoken@9.0.2) with Bearer token
 - **Runtime**: Frontend and backend are **separate runtimes**
   - Frontend: `nextjs-app/` (runs on port 3000)
   - Backend: `server/` (runs on port 3001)
@@ -32,23 +33,30 @@ This is a **task management system** (Kanban-style) that allows users to:
 **Key Frontend Files:**
 | File | Purpose |
 |------|---------|
-| `page.tsx` | Entry point, auth routing |
+| `page.tsx` | Entry point, auth routing, tutorial trigger |
 | `context/TaskContext.tsx` | Global task state management |
+| `context/TutorialContext.tsx` | Tutorial state management |
 | `components/TaskContainer.tsx` | Main kanban board container |
 | `components/TaskItem.tsx` | Individual task card |
-| `components/AuthSplash.tsx` | Login/signup UI |
+| `components/AuthSplash.tsx` | Login/signup UI + suggested tasks |
+| `components/TutorialOverlay.tsx` | Tutorial overlay with spotlight and tooltip |
+| `components/TutorialTooltip.tsx` | Tutorial instruction card |
+| `components/TutorialAnimation.tsx` | Animated demos (pulse, drag, click, type) |
+| `components/Header.tsx` | App header with help button to restart tutorial |
+| `hooks/useTutorialActionDetector.ts` | Detects user actions to advance tutorial steps |
+| `data/tutorialSteps.ts` | Tutorial step definitions (10 steps) |
 | `lib/api.ts` | API wrapper functions |
 
 ### Backend (Express)
 - **REST API server** with SQLite persistence
 - **No UI responsibilities** - serves only JSON responses
 - **Endpoints:**
-  - `GET /users` - List all users
-  - `POST /users` - Create new user
-  - `GET /tasks?username=X` - Fetch tasks for user
-  - `POST /tasks` - Create new task
-  - `PUT /tasks/:id` - Update task
-  - `DELETE /tasks/:id` - Delete task
+  - `POST /auth/signup` - Create new user, returns JWT token
+  - `POST /auth/login` - Authenticate user, returns JWT token
+  - `GET /tasks` - Fetch tasks for authenticated user (requires Bearer token)
+  - `POST /tasks` - Create new task (requires Bearer token)
+  - `PUT /tasks/:id` - Update task (requires Bearer token, must belong to user)
+  - `DELETE /tasks/:id` - Delete task (requires Bearer token, must belong to user)
 
 **Key Backend File:**
 - `server/index.js` - Single-file Express server with SQLite setup
@@ -85,11 +93,17 @@ UI Re-render (React)
 - ✅ **Task Editing** - Title, description, category via detail panel or inline
 - ✅ **Task Deletion** - Cross button on each task
 - ✅ **Category System** - 6 categories (Work, Personal, Health, Learning, Finance, Other) with color dots
-- ✅ **Authentication Flow** - Signup and login with localStorage persistence
+- ✅ **Authentication Flow** - JWT signup and login with token-based sessions (24h expiry)
+- ✅ **Auto-Logout** - Expired/invalid tokens trigger automatic logout and redirect
 - ✅ **Drag and Drop** - Move tasks between columns
-- ✅ **Sidebar** - Category filter with visibility toggle
+- ✅ **Sidebar** - Category filter with visibility toggle and collapsible state (slides off-screen leaving 24px toggle tab)
 - ✅ **Focus Views** - Double-click column/category for expanded view
 - ✅ **Toast Notifications** - Temporary messages for user feedback
+- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Help button)
+- ✅ **Onboarding Suggestions** - Suggested tasks shown after signup before entering board
+- ✅ **Dynamic Theme** - App theme color changes to match selected category, reverts to default blue on "All"
+- ✅ **Interactive Halftone Background** - Canvas-based dot grid reacting to mouse movement (idle = 0 CPU overhead)
+- ✅ **Hover Float Effects** - Kanban columns, task cards, and category sidebar buttons lift with scale/shadow on hover
 
 ### NOT Implemented (do not assume existence):
 - ❌ Task search/filtering by title
@@ -139,7 +153,30 @@ UI Re-render (React)
    - **Fix 2**: Changed `.kanban-board` from `max-width: 100%` to `min-width: 872px`
    - **Result**: All 3 columns now display centered and fully visible with horizontal scrolling on narrow viewports
 
-7. **Final state**: React-driven UI with Express backend, DaisyUI styling, Framer Motion animations
+7. **Interactive UI Enhancements** (2026-05):
+    - Added `HalftoneBackground.tsx`: Canvas-based interactive dot grid background
+    - Optimized canvas rendering with `requestAnimationFrame` + `needsRedraw` flag (idle = 0 CPU)
+    - Halftone specs: 12×14 dot spacing, 150px mouse radius, dots grow 1.5→4px, opacity 0.04→0.15
+    - Added hover float effects for columns, tasks, and category buttons
+
+8. **JWT Authentication System** (2026-05):
+    - Replaced plaintext username auth with JWT Bearer tokens (`jsonwebtoken@9.0.2`)
+    - Added `/auth/signup` and `/auth/login` endpoints, removed old user endpoints
+    - `authenticateToken` middleware on all `/tasks` routes — user data isolation by `user_id`
+    - Frontend `api.ts` handles token storage, 401 auto-logout, and Bearer headers
+
+9. **UI Refinements** (2026-05):
+    - Collapsible category sidebar with slide animation and 24px toggle tab
+    - Removed `username` from Task interface — identity derived from JWT token
+    - `TaskItem` ref error fixed: wrapped with `motion.div` in `TaskContainer` for AnimatePresence
+
+10. **Interactive Tutorial System** (2026-05):
+    - 10-step guided walkthrough auto-starting after signup
+    - Tutorial state managed via React Context + `localStorage` persistence
+    - Action detection (click, type, drag, wait) with visual animations
+    - Help button in header to restart tutorial anytime
+
+11. **Final state**: React-driven UI with Express backend, DaisyUI styling, Framer Motion animations, JWT auth, interactive tutorial
 
 ---
 
@@ -147,8 +184,10 @@ UI Re-render (React)
 
 ### Security:
 - ⚠️ **Passwords stored in plaintext** in SQLite (no hashing)
-- ⚠️ **Password returned in API response** on user creation (`server/index.js:77`)
-- ⚠️ **No authentication tokens** - relies on `localStorage` username check
+- ⚠️ **JWT tokens stored in localStorage** (vulnerable to XSS) — httpOnly cookies planned
+- ⚠️ **No refresh token mechanism** (24h token expiry requires re-login)
+- ⚠️ **No CORS origin restriction** (currently allows all origins)
+- ⚠️ **No advanced security hardening** for production use
 
 ### Code Quality:
 - ⚠️ **Direct DOM manipulation remains** in `AuthSplash.tsx` (lines 232-237, 260-265) for password toggle
@@ -194,6 +233,16 @@ UI Re-render (React)
 - Validation: Empty title shows error styling (`border-color: #e57373`)
 - Title saves on Enter or blur, cancels on Escape
 
+### Tutorial System (2026-05):
+- **Trigger**: Automatically starts after new user signup + suggestions panel
+- **Steps**: 10 interactive steps covering all core features
+- **Action Detection**: Click, type, drag (via TaskContext diff), and wait (auto-advance)
+- **Persistence**: `localStorage` keys: `tutorialCompleted`, `isNewUser`, `tutorialActive`, `tutorialCurrentStep`
+- **Restart**: "Help" button in header restarts tutorial anytime
+- **Resume**: If page refreshes mid-tutorial, resumes from saved step
+- **Touch Support**: Both `click` and `touchend` events detected for mobile
+- **No cleanup needed**: Tutorial works with existing tasks; no tutorial-specific tasks created
+
 ### Debugging Approach:
 - When encountering issues, create **minimal reproducible test** (isolated button with direct state update)
 - Compare working minimal case with broken implementation
@@ -202,21 +251,49 @@ UI Re-render (React)
 ### File Structure Quick Reference:
 ```
 task-creation-app/
-├── nextjs-app/           # Frontend (Next.js)
+├── nextjs-app/                     # Frontend (Next.js)
 │   ├── app/
-│   │   ├── components/   # React components
-│   │   ├── context/      # State management
-│   │   ├── lib/          # API layer
-│   │   └── globals.css   # Styles
+│   │   ├── components/             # React components
+│   │   │   ├── AuthSplash.tsx       # Login/signup with JWT
+│   │   │   ├── TaskContainer.tsx    # Main kanban board
+│   │   │   ├── TaskItem.tsx         # Individual task card
+│   │   │   ├── KanbanColumn.tsx     # Column container
+│   │   │   ├── Sidebar.tsx          # Collapsible category filter
+│   │   │   ├── TaskDetailPanel.tsx  # Task editing overlay
+│   │   │   ├── DragDropHandler.tsx  # Drag-and-drop logic
+│   │   │   ├── CategoryFocusView.tsx
+│   │   │   ├── ColumnFocusView.tsx
+│   │   │   ├── Header.tsx           # Header with Help button
+│   │   │   ├── Toast.tsx
+│   │   │   ├── HalftoneBackground.tsx  # Interactive canvas background
+│   │   │   ├── ThemeProvider.tsx    # Dynamic theme switching
+│   │   │   ├── TutorialOverlay.tsx  # Spotlight + backdrop
+│   │   │   ├── TutorialTooltip.tsx  # Instruction tooltip card
+│   │   │   ├── TutorialAnimation.tsx # Animated demos
+│   │   │   └── HandCursorIcon.tsx   # SVG hand cursor icon
+│   │   ├── context/                # State management
+│   │   │   ├── TaskContext.tsx      # Task state (JWT-based auth)
+│   │   │   └── TutorialContext.tsx  # Tutorial state
+│   │   ├── hooks/
+│   │   │   └── useTutorialActionDetector.ts
+│   │   ├── data/
+│   │   │   └── tutorialSteps.ts     # 10 tutorial step definitions
+│   │   ├── lib/
+│   │   │   └── api.ts              # API layer (JWT Bearer tokens)
+│   │   ├── globals.css             # Styles (Tailwind + custom)
+│   │   ├── constants.ts            # Category colors
+│   │   └── page.tsx                # Entry point (token validation)
 │   └── package.json
-├── server/               # Backend (Express)
-│   ├── index.js          # Server + SQLite setup
-│   └── database.sqlite  # SQLite database (auto-created)
-└── Prompts used.md       # Development history
+├── server/                         # Backend (Express)
+│   ├── index.js                    # Server + SQLite + JWT auth
+│   └── package.json
+├── AGENT_CONTEXT.md                # This handover document
+├── Prompts used.md                 # Development history
+└── README.md
 ```
 
 ---
 
-**Last Updated**: 2026-05-06
+**Last Updated**: 2026-05-10
 **Agent**: AI Assistant (big-pickle model)
-**Project State**: Stable, functional, with DaisyUI styling and Framer Motion animations
+**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, and interactive tutorial system

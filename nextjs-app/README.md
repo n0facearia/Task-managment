@@ -9,6 +9,9 @@ This is the frontend of a **Kanban-style task management application** built wit
 - **Animations**: Framer Motion
 - **State Management**: React Context (`TaskContext.tsx`)
 - **Backend Communication**: REST API via `app/lib/api.ts` (Express server on port 3001)
+- **Authentication**: JWT (Bearer tokens via `jsonwebtoken`)
+- **Background**: Interactive halftone canvas (`HalftoneBackground.tsx`)
+- **Tutorial**: 10-step interactive walkthrough
 
 ## Getting Started
 
@@ -32,24 +35,35 @@ This is the frontend of a **Kanban-style task management application** built wit
 ```
 app/
 ├── components/       # React components
-│   ├── AuthSplash.tsx          # Login/signup UI
+│   ├── AuthSplash.tsx          # JWT login/signup UI
 │   ├── TaskContainer.tsx       # Main kanban board
 │   ├── TaskItem.tsx            # Individual task card
 │   ├── KanbanColumn.tsx        # Column container
-│   ├── Sidebar.tsx             # Category filter sidebar
+│   ├── Sidebar.tsx             # Collapsible category filter sidebar
 │   ├── TaskDetailPanel.tsx     # Task editing overlay
 │   ├── DragDropHandler.tsx     # Drag-and-drop logic
 │   ├── CategoryFocusView.tsx   # Category expanded view
 │   ├── ColumnFocusView.tsx     # Column expanded view
-│   ├── Header.tsx              # App header with logout
-│   └── Toast.tsx               # Toast notifications
+│   ├── Header.tsx              # App header with Help button
+│   ├── Toast.tsx               # Toast notifications
+│   ├── HalftoneBackground.tsx  # Interactive canvas dot grid
+│   ├── ThemeProvider.tsx       # Dynamic category-based theming
+│   ├── TutorialOverlay.tsx     # Tutorial spotlight + backdrop
+│   ├── TutorialTooltip.tsx     # Tutorial instruction card
+│   ├── TutorialAnimation.tsx   # Animated tutorial demos
+│   └── HandCursorIcon.tsx      # SVG hand cursor icon
 ├── context/
-│   └── TaskContext.tsx         # Global task state
+│   ├── TaskContext.tsx         # Global task state
+│   └── TutorialContext.tsx     # Tutorial state management
+├── hooks/
+│   └── useTutorialActionDetector.ts  # Action detection for tutorial
+├── data/
+│   └── tutorialSteps.ts        # 10 tutorial step definitions
 ├── lib/
-│   └── api.ts                  # API wrapper functions
+│   └── api.ts                  # API wrapper (JWT Bearer auth)
 ├── globals.css                 # Custom styles + Tailwind
 ├── layout.tsx                  # Root layout
-├── page.tsx                    # Entry point
+├── page.tsx                    # Entry point (token validation)
 └── constants.ts                # Category colors
 ```
 
@@ -58,9 +72,13 @@ app/
 - Kanban board with Todo / Doing / Done columns
 - Inline task creation, editing, and deletion
 - Drag-and-drop between columns
-- Color-coded categories with sidebar filtering
+- Color-coded categories with collapsible sidebar filtering
 - Focus views (double-click columns or categories)
-- User authentication with session persistence
+- JWT authentication with auto-logout on expired tokens
+- 10-step interactive tutorial (auto-starts after signup)
+- Interactive halftone dot grid background
+- Hover float effects on columns, tasks, and sidebar
+- Dynamic theme switching based on selected category
 
 ## Note
 

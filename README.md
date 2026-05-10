@@ -131,9 +131,12 @@ The migration followed an **incremental strategy**:
 - ✅ **Auto-Logout** - Expired/invalid tokens trigger automatic logout and redirect
 
 ### UI Features
+- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Help button)
+- ✅ **Onboarding** - Welcome task and suggested tasks after signup
+- ✅ **Help System** - Restart tutorial anytime from Help button in header
+- ✅ **Dynamic Theme** - App theme color changes to match selected category
 - ✅ **Toast Notifications** - Temporary messages for user feedback
 - ✅ **Loading States** - Visual feedback during API operations
-- ✅ **Onboarding Suggestions** - Quick-start task suggestions after signup
 - ✅ **Interactive Halftone Background** - Canvas-based dot grid that reacts to mouse movement (idle = 0 CPU overhead)
 - ✅ **Hover Float Effects** - Kanban columns, task cards, and category sidebar buttons lift with subtle scale and drop shadow on hover
 - ✅ **Collapsible Sidebar** - Category sidebar slides off-screen leaving a 24px toggle tab (☰/◂)
@@ -158,12 +161,22 @@ task-creation-app/
 │   │   │   ├── ColumnFocusView.tsx
 │   │   │   ├── Header.tsx
 │   │   │   └── Toast.tsx
-│   │   │   └── HalftoneBackground.tsx
+│   │   │   ├── HalftoneBackground.tsx
+│   │   │   ├── ThemeProvider.tsx
+│   │   │   ├── TutorialOverlay.tsx
+│   │   │   ├── TutorialTooltip.tsx
+│   │   │   ├── TutorialAnimation.tsx
+│   │   │   └── HandCursorIcon.tsx
 │   │   ├── context/
-│   │   │   └── TaskContext.tsx  # State management
+│   │   │   ├── TaskContext.tsx      # Task state management
+│   │   │   └── TutorialContext.tsx  # Tutorial state management
+│   │   ├── hooks/
+│   │   │   └── useTutorialActionDetector.ts  # Tutorial action detection
+│   │   ├── data/
+│   │   │   └── tutorialSteps.ts     # Tutorial step definitions
 │   │   ├── lib/
-│   │   │   └── api.ts          # API layer
-│   │   ├── globals.css         # Styles
+│   │   │   └── api.ts               # API layer
+│   │   ├── globals.css              # Styles
 │   │   ├── layout.tsx
 │   │   └── page.tsx
 │   └── package.json
@@ -171,8 +184,8 @@ task-creation-app/
 │   ├── index.js              # Express server + SQLite setup
 │   └── package.json
 ├── README.md
-├── AGENT_CONTEXT.md         # AI/engineer handover document
-└── Prompts used.md          # Development history
+├── AGENT_CONTEXT.md          # AI/engineer handover document
+└── Prompts used.md           # Development history
 ```
 
 ---
@@ -247,4 +260,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-05-06 (JWT auth, collapsible sidebar, AnimatePresence fix)
+2026-05-10 (JWT auth, collapsible sidebar, AnimatePresence fix, tutorial system, halftone background, dynamic theme)

@@ -88,6 +88,36 @@ An **AI agent** was used throughout the process to perform step-by-step migratio
   - Changed `.kanban-board` from `max-width: 100%` to `min-width: 872px` (ensures all 3 columns + gaps fit: 3×280 + 2×16 = 872px)
 - **Result**: All 3 columns now display centered and fully visible with horizontal scrolling on narrow viewports
 
+### Phase 9: Interactive UI Enhancements (2026-05)
+- Added `HalftoneBackground.tsx`: Canvas-based interactive dot grid background
+- Canvas rendering optimized with `requestAnimationFrame` + `needsRedraw` flag (idle = 0 CPU)
+- Halftone specs: 12×14 dot spacing, 150px mouse radius, dots grow 1.5→4px, opacity 0.04→0.15
+- Column hover float: `y: -4px`, shadow overlay, `z-index` stacking to overlap header
+- Task hover float: `scale: 1.02`, `y: -2px`, shadow, fast transition
+- Category sidebar buttons: same float effect with `duration: 0.15s`
+
+### Phase 10: JWT Authentication System (2026-05)
+- Replaced plaintext username auth with JWT Bearer tokens (`jsonwebtoken@9.0.2`)
+- Added `/auth/signup` and `/auth/login` endpoints, removed `GET /users` and `POST /users`
+- Added `authenticateToken` middleware on all `/tasks` routes — user data isolation by `user_id`
+- Auto-migration: `user_id` column added to `tasks` table with backfill from `username`
+- Frontend `api.ts` rewritten for token storage, 401 auto-logout, Bearer headers on every request
+- `TaskItem` ref error fixed: wrapped with `motion.div` in `TaskContainer` for AnimatePresence compatibility
+
+### Phase 11: UI Refinements (2026-05)
+- Collapsible category sidebar: slides off-screen leaving 24px tab, smooth `0.3s` transition
+- Removed `username` from Task interface — identity now derived entirely from JWT token
+- Build passes cleanly with zero warnings
+
+### Phase 12: Interactive Tutorial & Dynamic Theme (2026-05)
+- Added 10-step interactive tutorial (TutorialOverlay, TutorialTooltip, TutorialAnimation)
+- Tutorial uses React Context + localStorage for state persistence and resume support
+- Action detection: click, type, drag (via TaskContext diff), and wait (auto-advance)
+- Added dynamic theme switching — app color adapts to selected category
+- Added ThemeProvider component for category-based color theming
+- Help button in header restarts tutorial anytime
+- Onboarding suggestions shown after signup before entering board
+
 ---
 
 ## 3. Problem-Solving Approach
@@ -165,3 +195,19 @@ For a production project, a more planned approach with:
 | `nextjs-app/tailwind.config.js` | New file: Tailwind + DaisyUI configuration |
 | `nextjs-app/postcss.config.js` | New file: PostCSS configuration |
 | `server/index.js` | Audited SQL syntax (was already correct) |
+| `nextjs-app/app/components/HalftoneBackground.tsx` | New file: interactive canvas dot grid background |
+| `nextjs-app/app/components/ThemeProvider.tsx` | New file: dynamic theme switching by category |
+| `nextjs-app/app/components/TutorialOverlay.tsx` | New file: tutorial spotlight + backdrop |
+| `nextjs-app/app/components/TutorialTooltip.tsx` | New file: tutorial instruction card |
+| `nextjs-app/app/components/TutorialAnimation.tsx` | New file: animated demos for tutorial |
+| `nextjs-app/app/components/HandCursorIcon.tsx` | New file: SVG hand cursor icon |
+| `nextjs-app/app/context/TutorialContext.tsx` | New file: tutorial state management |
+| `nextjs-app/app/hooks/useTutorialActionDetector.ts` | New file: action detection for tutorial |
+| `nextjs-app/app/data/tutorialSteps.ts` | New file: 10 tutorial step definitions |
+| `nextjs-app/app/lib/api.ts` | Full rewrite: JWT token management, Bearer auth headers, 401 auto-logout |
+| `nextjs-app/app/context/TaskContext.tsx` | Removed `username` field; switched to JWT-based identity |
+| `nextjs-app/app/components/Sidebar.tsx` | Added collapsible state with toggle button |
+| `nextjs-app/app/components/TaskContainer.tsx` | Wrapped `TaskItem` in `motion.div` for AnimatePresence |
+| `nextjs-app/app/components/AuthSplash.tsx` | Switched from plaintext username to JWT signup/login |
+| `nextjs-app/app/globals.css` | Added halftone styles, collapsible sidebar CSS, hover float effects |
+| `server/package.json` | Added `jsonwebtoken@9.0.2` dependency |
