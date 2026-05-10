@@ -15,7 +15,7 @@ The tutorial system provides a step-by-step interactive walkthrough for new user
 ### Step Advancement
 Each step has an `action` type that determines how it advances:
 - **click**: Detects click on target element (uses capturing event listener)
-- **type**: Detects input in target field (advances on first character)
+- **type**: Detects Enter key in target input field (advances on Enter with non-empty value)
 - **drag**: Detects task status change via `TaskContext` diff comparison
 - **wait**: Auto-advances after 2.5 seconds
 
@@ -25,14 +25,20 @@ Each step has an `action` type that determines how it advances:
 |------|--------|--------|-------------|
 | 0 | `#create-task` | click | Create your first task |
 | 1 | `.task-title-edit` | type | Name your task |
-| 2 | `[data-tutorial="open-detail"]` | click | Open detail panel |
-| 3 | `#task-detail-categories` | wait | Choose a category |
-| 4 | `#todo-column` | drag | Move task to Doing |
-| 5 | `#doing-column` | drag | Move task to Done |
-| 6 | `.cross-button` | click | Delete a task |
-| 7 | `#category-sidebar` | click | Filter by category |
-| 8 | `.category-filter-all` | click | View all tasks |
-| 9 | `null` | wait | Completion message |
+| 2 | `.task-description-edit` | type | Add a description |
+| 3 | `[data-tutorial="open-detail"]` | click | Open detail panel |
+| 4 | `[data-tutorial="category-option"]` | click | Pick a category |
+| 5 | `#task-detail-title` | type | Edit title in panel |
+| 6 | `#task-detail-description` | type | Edit description in panel |
+| 7 | `[data-tutorial="edit-task-done"]` | click | Click Done to save |
+| 8 | `[data-tutorial="task-next-status"]` | click | Move task forward |
+| 9 | `[data-tutorial="task-back-status"]` | click | Move task back |
+| 10 | `#todo-column` | drag | Drag task to Doing |
+| 11 | `#doing-column` | drag | Drag task to Done |
+| 12 | `.cross-button` | click | Delete a task |
+| 13 | `#category-sidebar` | click | Filter by category |
+| 14 | `.category-filter-all` | click | View all tasks |
+| 15 | `null` | wait | Completion message |
 
 ## Architecture
 
@@ -56,7 +62,7 @@ Each step has an `action` type that determines how it advances:
 
 | File | Purpose |
 |------|---------|
-| `data/tutorialSteps.ts` | Defines all 10 tutorial steps with targets, actions, animations, and positioning |
+| `data/tutorialSteps.ts` | Defines all 16 tutorial steps with targets, actions, animations, and positioning |
 
 ## localStorage Keys
 
@@ -85,8 +91,8 @@ Each step has an `action` type that determines how it advances:
 3. For drag steps, update `DRAG_STATUS_MAP` in `useTutorialActionDetector.ts`:
    ```typescript
    const DRAG_STATUS_MAP: Record<number, string> = {
-     4: "inProgress",  // Step 4 → task moves to inProgress
-     5: "completed",   // Step 5 → task moves to completed
+     10: "inProgress",  // Step 10 → task moves to inProgress
+     11: "completed",   // Step 11 → task moves to completed
    };
    ```
 
@@ -138,7 +144,7 @@ Each step has an `action` type that determines how it advances:
 ### Tutorial doesn't advance on action
 - Check that `actionTarget` selector matches the element the user interacts with
 - For drag steps: verify `DRAG_STATUS_MAP` has the correct step-to-status mapping
-- For type steps: check that the input field fires `input` events
+- For type steps: press Enter in the target input (advances on Enter keydown with non-empty value, not on first character)
 - Add `console.log` in `useTutorialActionDetector.ts` to debug
 
 ### Tutorial resumes from wrong step after refresh

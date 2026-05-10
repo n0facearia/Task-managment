@@ -190,7 +190,6 @@ UI Re-render (React)
 - ⚠️ **No advanced security hardening** for production use
 
 ### Code Quality:
-- ⚠️ **Direct DOM manipulation remains** in `AuthSplash.tsx` (lines 232-237, 260-265) for password toggle
 - ⚠️ **Module-level variable** `toastId` in `Toast.tsx` (line 23) shared across renders
 - ⚠️ **Duplicate validation** in `AuthSplash.tsx` (line 99 checks `!username` again after line 100)
 
@@ -235,13 +234,15 @@ UI Re-render (React)
 
 ### Tutorial System (2026-05):
 - **Trigger**: Automatically starts after new user signup + suggestions panel
-- **Steps**: 10 interactive steps covering all core features
-- **Action Detection**: Click, type, drag (via TaskContext diff), and wait (auto-advance)
+- **Steps**: 16 interactive steps (0-15) covering all core features
+- **Action Detection**: Click, type (Enter key only), drag (via TaskContext diff), and wait (auto-advance)
+- **Type Advancement**: All `type` steps advance only on Enter keydown with non-empty value (not on first character)
 - **Persistence**: `localStorage` keys: `tutorialCompleted`, `isNewUser`, `tutorialActive`, `tutorialCurrentStep`
 - **Restart**: "Help" button in header restarts tutorial anytime
 - **Resume**: If page refreshes mid-tutorial, resumes from saved step
 - **Touch Support**: Both `click` and `touchend` events detected for mobile
 - **No cleanup needed**: Tutorial works with existing tasks; no tutorial-specific tasks created
+- **Task Detail Panel Flow**: Title Enter → focuses Description; Description Enter → focuses Done button; Done click → saves and closes
 
 ### Debugging Approach:
 - When encountering issues, create **minimal reproducible test** (isolated button with direct state update)
@@ -296,4 +297,4 @@ task-creation-app/
 
 **Last Updated**: 2026-05-10
 **Agent**: AI Assistant (big-pickle model)
-**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, and interactive tutorial system
+**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, interactive tutorial system, animated eye icons for password toggle, Enter-chained focus flow in TaskDetailPanel

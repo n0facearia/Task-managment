@@ -260,4 +260,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-05-10 (JWT auth, collapsible sidebar, AnimatePresence fix, tutorial system, halftone background, dynamic theme)
+2026-05-10 (JWT auth, collapsible sidebar, AnimatePresence fix, tutorial system, halftone background, dynamic theme, animated eye icons, Enter-chained focus flow, 16-step tutorial)
