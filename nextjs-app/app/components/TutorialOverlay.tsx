@@ -4,7 +4,6 @@ import { useEffect, useState, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTutorial } from "../context/TutorialContext";
 import { useTasks } from "../context/TaskContext";
-import * as api from "../lib/api";
 import TutorialTooltip from "./TutorialTooltip";
 import TutorialAnimation from "./TutorialAnimation";
 import { useTutorialActionDetector } from "../hooks/useTutorialActionDetector";
@@ -190,5 +189,3 @@ export default function TutorialOverlay({ isLoggedIn }: TutorialOverlayProps) {
     </div>
   );
 }
-
-

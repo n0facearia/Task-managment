@@ -21,14 +21,13 @@ export function useToast() {
   return useContext(ToastContext);
 }
 
-let toastId = 0;
-
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const timersRef = useRef<Map<number, NodeJS.Timeout>>(new Map());
+  const toastIdRef = useRef(0);
 
   const showToast = useCallback((message: string) => {
-    const id = ++toastId;
+    const id = ++toastIdRef.current;
     setToasts((prev) => [...prev, { id, text: message }]);
     const timer = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));

@@ -160,7 +160,7 @@ Each step has an `action` type that determines how it advances:
 
 ## Restarting Tutorial
 
-Users can restart the tutorial anytime by clicking the **"Help"** button in the app header. This:
+Users can restart the tutorial anytime by clicking the **"Tutorial"** button in the app header. This:
 1. Clears the `tutorialCompleted` flag
 2. Resets to step 0
 3. Starts the tutorial immediately

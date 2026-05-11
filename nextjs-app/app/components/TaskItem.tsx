@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import type { Task, TaskStatus } from "../context/TaskContext";
 import { CATEGORY_COLORS } from "../constants";
 

@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -175,24 +176,28 @@ export function TutorialProvider({ children }: { children: ReactNode }) {
     return completed !== "true";
   }, []);
 
+  const contextValue = useMemo(() => ({
+    isTutorialActive,
+    currentStep,
+    tutorialCompleted,
+    currentStepData,
+    totalSteps,
+    demoTaskId,
+    startTutorial,
+    nextStep,
+    prevStep,
+    skipTutorial,
+    completeTutorial,
+    goToStep,
+    checkIfNewUser,
+  }), [
+    isTutorialActive, currentStep, tutorialCompleted, currentStepData,
+    totalSteps, demoTaskId, startTutorial, nextStep, prevStep,
+    skipTutorial, completeTutorial, goToStep, checkIfNewUser,
+  ]);
+
   return (
-    <TutorialContext.Provider
-      value={{
-        isTutorialActive,
-        currentStep,
-        tutorialCompleted,
-        currentStepData,
-        totalSteps,
-        demoTaskId,
-        startTutorial,
-        nextStep,
-        prevStep,
-        skipTutorial,
-        completeTutorial,
-        goToStep,
-        checkIfNewUser,
-      }}
-    >
+    <TutorialContext.Provider value={contextValue}>
       {children}
     </TutorialContext.Provider>
   );

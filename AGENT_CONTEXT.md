@@ -100,7 +100,7 @@ UI Re-render (React)
 - ✅ **Sidebar** - Category filter with visibility toggle and collapsible state (slides off-screen leaving 24px toggle tab)
 - ✅ **Focus Views** - Double-click column/category for expanded view
 - ✅ **Toast Notifications** - Temporary messages for user feedback
-- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Tutorial button)
+- ✅ **Interactive Tutorial** - 16-step guided walkthrough for new users (auto-starts after signup, restartable from Tutorial button)
 - ✅ **Onboarding Suggestions** - Suggested tasks shown after signup before entering board
 - ✅ **Dynamic Theme** - App theme color changes to match selected category, reverts to default blue on "All"
 - ✅ **Interactive Halftone Background** - Canvas-based dot grid reacting to mouse movement (idle = 0 CPU overhead)
@@ -176,10 +176,10 @@ UI Re-render (React)
     - `TaskItem` ref error fixed: wrapped with `motion.div` in `TaskContainer` for AnimatePresence
 
 10. **Interactive Tutorial System** (2026-05):
-    - 10-step guided walkthrough auto-starting after signup
+    - 16-step guided walkthrough auto-starting after signup
     - Tutorial state managed via React Context + `localStorage` persistence
     - Action detection (click, type, drag, wait) with visual animations
-    - Help button in header to restart tutorial anytime
+    - Tutorial button in header to restart tutorial anytime
 
 11. **Final state**: React-driven UI with Express backend, DaisyUI styling, Framer Motion animations, JWT auth, interactive tutorial
 
@@ -205,6 +205,19 @@ UI Re-render (React)
     - Multiple simultaneous ripples supported via `ripplesRef` array
     - Integrated into existing `requestAnimationFrame` loop — no second loop added
     - Click listener on `window` (canvas has `pointerEvents: none`)
+
+17. **Performance Optimization & Code Cleanup** (2026-05-11):
+    - **HalftoneBackground**: Idle `requestAnimationFrame` now stops completely (`animFrameRef.current = 0`) instead of spinning with early return — restarts only on mouse/resize/click events
+    - **TaskContainer**: Wrapped column task filters in `useMemo` to avoid recomputation on every render; removed unused imports (`CATEGORY_COLORS`, `HalftoneBackground`)
+    - **TaskItem**: Removed unused `AnimatePresence` import
+    - **Toast**: Replaced module-level `toastId` with `useRef` inside `ToastProvider` to avoid shared mutable state across renders
+    - **TutorialOverlay**: Removed unused `api` import
+    - **TaskContext**: Memoized context value with `useMemo` — prevents unnecessary re-renders of all context consumers
+    - **TutorialContext**: Same — memoized context value with `useMemo`
+    - **layout.tsx**: Changed `HalftoneBackground` to dynamic import with `ssr: false` (avoids SSR issues with canvas)
+    - **page.tsx**: Lazy loaded `TutorialOverlay` via `React.lazy` + wrapped in `Suspense`; removed unused `TaskProvider` import
+    - **server/index.js**: Added `CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id)` for query performance
+    - **globals.css**: Removed ~470 lines of unused/legacy CSS (old tutorial overlay/box/buttons, auth buttons, loading indicator, suggestions, tick-button, task-category-indicator, tutorial tooltip styles, responsive tutorial CSS)
 
 ---
 
@@ -266,7 +279,7 @@ UI Re-render (React)
 - **Action Detection**: Click, type (Enter key only), drag (via TaskContext diff), and wait (auto-advance)
 - **Type Advancement**: All `type` steps advance only on Enter keydown with non-empty value (not on first character)
 - **Persistence**: `localStorage` keys: `tutorialCompleted`, `isNewUser`, `tutorialActive`, `tutorialCurrentStep`
-- **Restart**: "Help" button in header restarts tutorial anytime
+- **Restart**: "Tutorial" button in header restarts tutorial anytime
 - **Resume**: If page refreshes mid-tutorial, resumes from saved step
 - **Touch Support**: Both `click` and `touchend` events detected for mobile
 - **No cleanup needed**: Tutorial works with existing tasks; no tutorial-specific tasks created
@@ -307,7 +320,7 @@ task-creation-app/
 │   │   ├── hooks/
 │   │   │   └── useTutorialActionDetector.ts
 │   │   ├── data/
-│   │   │   └── tutorialSteps.ts     # 10 tutorial step definitions
+│   │   │   └── tutorialSteps.ts     # 16 tutorial step definitions
 │   │   ├── lib/
 │   │   │   └── api.ts              # API layer (JWT Bearer tokens)
 │   │   ├── globals.css             # Styles (Tailwind + custom)
@@ -324,6 +337,6 @@ task-creation-app/
 
 ---
 
-**Last Updated**: 2026-05-10
+**Last Updated**: 2026-05-11
 **Agent**: AI Assistant (big-pickle model)
-**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, interactive tutorial system, animated eye icons for password toggle, Enter-chained focus flow in TaskDetailPanel, category-inheriting quick create, category-colored task card borders, Logo with hover tick animation, halftone click ripple
+**Project State**: Stable, functional, with DaisyUI styling, Framer Motion animations, dynamic theme switching, interactive tutorial system, animated eye icons for password toggle, Enter-chained focus flow in TaskDetailPanel, category-inheriting quick create, category-colored task card borders, Logo with hover tick animation, halftone click ripple, performance optimizations (useMemo, lazy loading, idle animation halt, dead CSS removal, SQL index)

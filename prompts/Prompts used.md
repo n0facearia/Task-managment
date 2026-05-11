@@ -110,13 +110,24 @@ An **AI agent** was used throughout the process to perform step-by-step migratio
 - Build passes cleanly with zero warnings
 
 ### Phase 12: Interactive Tutorial & Dynamic Theme (2026-05)
-- Added 10-step interactive tutorial (TutorialOverlay, TutorialTooltip, TutorialAnimation)
-- Tutorial uses React Context + localStorage for state persistence and resume support
+- Added 16-step interactive tutorial (TutorialOverlay, TutorialTooltip, TutorialAnimation)
+- Tutorial uses React Context + localStorage for state management and resume support
 - Action detection: click, type, drag (via TaskContext diff), and wait (auto-advance)
 - Added dynamic theme switching — app color adapts to selected category
 - Added ThemeProvider component for category-based color theming
 - Help button in header restarts tutorial anytime
 - Onboarding suggestions shown after signup before entering board
+
+### Phase 13: Performance Optimization & Code Cleanup (2026-05-11)
+- HalftoneBackground: idle `requestAnimationFrame` halts completely, restarts on events
+- TaskContainer: column filters wrapped in `useMemo`
+- TaskContext/TutorialContext: context values memoized with `useMemo` to prevent re-renders
+- Toast: module-level `toastId` replaced with `useRef`
+- layout.tsx: dynamic import of HalftoneBackground with `ssr: false`
+- page.tsx: lazy loaded TutorialOverlay via `React.lazy` + `Suspense`
+- server/index.js: added SQL index on `tasks(user_id)`
+- globals.css: ~470 lines of unused/legacy CSS removed
+- Removed unused imports across multiple files
 
 ---
 

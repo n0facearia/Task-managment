@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { TaskProvider } from "./context/TaskContext";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import TaskContainer from "./components/TaskContainer";
 import AuthSplash from "./components/AuthSplash";
-import TutorialOverlay from "./components/TutorialOverlay";
+const TutorialOverlay = lazy(() => import("./components/TutorialOverlay"));
 import { useTutorial } from "./context/TutorialContext";
 import { useTasks } from "./context/TaskContext";
 import * as api from "./lib/api";
@@ -82,7 +81,9 @@ export default function HomePage() {
 
   return (
     <>
-      <TutorialOverlay isLoggedIn={isAuthenticated} />
+      <Suspense fallback={null}>
+        <TutorialOverlay isLoggedIn={isAuthenticated} />
+      </Suspense>
       <TutorialStarter isAuthenticated={isAuthenticated} />
       {!isAuthenticated ? (
         <AuthSplash onAuthComplete={handleAuthComplete} />

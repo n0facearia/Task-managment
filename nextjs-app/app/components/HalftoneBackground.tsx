@@ -106,7 +106,7 @@ export default function HalftoneBackground() {
   const animate = useCallback(() => {
     const hasRipples = ripplesRef.current.length > 0;
     if (!needsRedrawRef.current && !hasRipples) {
-      animFrameRef.current = requestAnimationFrame(animate);
+      animFrameRef.current = 0;
       return;
     }
 
@@ -117,22 +117,35 @@ export default function HalftoneBackground() {
 
     drawHalftone(canvas, ctx);
     needsRedrawRef.current = false;
-    animFrameRef.current = requestAnimationFrame(animate);
+    if (ripplesRef.current.length > 0) {
+      animFrameRef.current = requestAnimationFrame(animate);
+    } else {
+      animFrameRef.current = 0;
+    }
   }, [drawHalftone]);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current = { x: e.clientX, y: e.clientY };
       needsRedrawRef.current = true;
+      if (!animFrameRef.current) {
+        animFrameRef.current = requestAnimationFrame(animate);
+      }
     };
 
     const handleResize = () => {
       needsRedrawRef.current = true;
+      if (!animFrameRef.current) {
+        animFrameRef.current = requestAnimationFrame(animate);
+      }
     };
 
     const handleClick = (e: MouseEvent) => {
       ripplesRef.current.push({ x: e.clientX, y: e.clientY, startTime: performance.now() });
       needsRedrawRef.current = true;
+      if (!animFrameRef.current) {
+        animFrameRef.current = requestAnimationFrame(animate);
+      }
     };
 
     window.addEventListener("mousemove", handleMouseMove);

@@ -117,10 +117,22 @@ The app was migrated **step-by-step** into Next.js:
       - Ripples expire when radius exceeds canvas diagonal
       - Integrated into existing `requestAnimationFrame` loop
 
-14. **Custom Cursor Attempt** (2026-05):
+ 14. **Custom Cursor Attempt** (2026-05):
       - CustomCursor.tsx was briefly created (white circle cursor + click ripple ring) then removed
       - `cursor: none` was added to `globals.css` then reverted
       - Default system cursor restored — no custom cursor remains
+
+ 15. **Performance Optimization & Code Cleanup** (2026-05):
+      - **HalftoneBackground**: Idle animation loop now stops completely (`animFrameRef.current = 0`) — restarts only on mouse events/ripples
+      - **TaskContainer**: Wrapped column filters in `useMemo`; removed unused imports
+      - **TaskItem**: Removed unused `AnimatePresence` import
+      - **Toast**: Replaced module-level `toastId` with `useRef` to avoid shared mutable state
+      - **TaskContext/TutorialContext**: Memoized context values with `useMemo` to prevent unnecessary re-renders
+      - **layout.tsx**: Dynamic import of `HalftoneBackground` with `ssr: false`
+      - **page.tsx**: Lazy loaded `TutorialOverlay` via `React.lazy` + `Suspense`
+      - **server/index.js**: Added SQL index `idx_tasks_user_id` for query performance
+      - **globals.css**: Removed ~470 lines of dead/legacy CSS (old tutorial styles, auth button CSS, etc.)
+      - Removed unused imports across multiple files
 
 ### Approach
 The migration followed an **incremental strategy**:
@@ -152,7 +164,7 @@ The migration followed an **incremental strategy**:
 - ✅ **Auto-Logout** - Expired/invalid tokens trigger automatic logout and redirect
 
 ### UI Features
-- ✅ **Interactive Tutorial** - 10-step guided walkthrough for new users (auto-starts after signup, restartable from Tutorial button)
+- ✅ **Interactive Tutorial** - 16-step guided walkthrough for new users (auto-starts after signup, restartable from Tutorial button)
 - ✅ **Onboarding** - Welcome task and suggested tasks after signup
 - ✅ **Help System** - Restart tutorial anytime from Tutorial button in header
 - ✅ **Dynamic Theme** - App theme color changes to match selected category
@@ -197,7 +209,7 @@ task-creation-app/
 │   │   ├── hooks/
 │   │   │   └── useTutorialActionDetector.ts  # Tutorial action detection
 │   │   ├── data/
-│   │   │   └── tutorialSteps.ts     # Tutorial step definitions
+│   │   │   └── tutorialSteps.ts     # 16 tutorial step definitions
 │   │   ├── lib/
 │   │   │   └── api.ts               # API layer
 │   │   ├── globals.css              # Styles
@@ -284,4 +296,4 @@ For detailed development history and AI agent context, see:
 ---
 
 ## Last Updated
-2026-05-10 (Logo component, Tutorial rename, halftone click ripple, category-aware quick-create, dynamic color borders, JWT auth, collapsible sidebar, AnimatePresence fix, tutorial system, halftone background, dynamic theme, animated eye icons, Enter-chained focus flow, 16-step tutorial)
+2026-05-11 (Performance optimization: idle animation halt, useMemo context, lazy loading, dead CSS cleanup, SQL index)

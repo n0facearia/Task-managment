@@ -59,28 +59,6 @@ body {
   letter-spacing: 0.2px;
 }
 
-.landing-buttons #btn-goto-signup:hover {
-  background: var(--theme-color);
-}
-
-.landing-buttons #btn-goto-login {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #333;
-  border-radius: 8px;
-  background: transparent;
-  color: #aaa;
-  font-size: 14px;
-  font-weight: 500;
-  font-family: inherit;
-  transition: all 150ms ease;
-}
-
-.landing-buttons #btn-goto-login:hover {
-  border-color: #555;
-  color: #e6e6e6;
-}
-
 .auth-heading {
   font-size: 15px;
   font-weight: 600;
@@ -106,83 +84,7 @@ body {
   border-color: var(--theme-color);
 }
 
-.auth-btn-primary {
-  width: 100%;
-  background: var(--theme-color);
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  font-family: inherit;
-  padding: 10px;
-  transition: background 0.3s ease;
-}
 
-.auth-btn-primary:hover {
-  background: var(--theme-color);
-}
-
-.auth-btn-secondary {
-  background: none;
-  border: none;
-  color: #555;
-  font-size: 12px;
-  font-family: inherit;
-  padding: 4px;
-  transition: color 150ms ease;
-}
-
-.auth-btn-secondary:hover {
-  color: #999;
-}
-
-.auth-error {
-  font-size: 12px;
-  color: #e57373;
-  margin: 0;
-  min-height: 16px;
-  text-align: center;
-  display: block;
-  width: 100%;
-  visibility: visible;
-  opacity: 1;
-}
-
-.password-rules {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.password-rules li {
-  font-size: 12px;
-  color: #555;
-  padding-left: 18px;
-  position: relative;
-  transition: color 150ms ease;
-}
-
-.password-rules li::before {
-  content: "✕";
-  position: absolute;
-  left: 0;
-  color: #555;
-  transition: color 150ms ease;
-}
-
-.password-rules li.valid {
-  color: #66bb6a;
-}
-
-.password-rules li.valid::before {
-  content: "✓";
-  color: #66bb6a;
-}
 .page-container {
   display: none;
   height: 100vh;
@@ -190,17 +92,6 @@ body {
   align-items: center;
   padding: 24px;
   box-sizing: border-box;
-}
-
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 8px;
-  position: relative;
-  z-index: 1;
 }
 
 #logout-btn {
@@ -326,42 +217,6 @@ h1 {
   align-items: center;
   gap: 8px;
   margin-top: 12px;
-}
-.tick-button {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  border: 2px solid #555;
-  background: transparent;
-  position: relative;
-  cursor: pointer;
-  transition:
-    background 150ms ease,
-    border-color 150ms ease;
-}
-.tick-button::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%) rotate(45deg);
-  width: 5px;
-  height: 10px;
-  border-right: 2.5px solid #ccc;
-  border-bottom: 2.5px solid #ccc;
-}
-.tick-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-.tick-button.completed {
-  background: transparent;
-  border-color: #555;
-}
-.tick-button.completed::after {
-  border-color: #ccc;
-}
-.tick-button.completed:hover {
-  background: rgba(255, 255, 255, 0.1);
 }
 .cross-button {
   width: 28px;
@@ -536,30 +391,7 @@ body {
   gap: 8px;
 }
 
-.btn-next,
-.btn-back {
-  background: none;
-  border: none;
-  font-size: 12px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  color: #666;
-  transition: background 150ms ease;
-}
 
-.btn-next {
-  color: var(--theme-color);
-  transition: color 0.3s ease, background 150ms ease;
-}
-
-.btn-next:hover,
-.btn-back:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.btn-next:hover {
-  background: rgba(30, 136, 229, 0.12);
-}
 #toast-container {
   position: fixed;
   top: 20px;
@@ -605,33 +437,6 @@ body {
   to {
     transform: scaleX(0);
   }
-}
-#loading-indicator {
-  margin-top: 24px;
-}
-
-#loading-text {
-  font-size: 13px;
-  font-weight: 400;
-  color: #999;
-  margin: 0;
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.3;
-  }
-}
-.suggestions-subtitle {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
-  text-align: center;
 }
 
 .suggestions-list {
@@ -685,84 +490,6 @@ body {
   pointer-events: none;
 }
 
-#tutorial-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9998;
-}
-
-#tutorial-box {
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 12px;
-  padding: 32px;
-  width: 420px;
-  max-width: 90vw;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-#tutorial-step-indicator {
-  font-size: 12px;
-  color: #888;
-  letter-spacing: 0.5px;
-}
-
-#tutorial-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: #e6e6e6;
-  margin: 0;
-}
-
-#tutorial-body {
-  font-size: 14px;
-  color: #aaa;
-  line-height: 1.6;
-  margin: 0;
-}
-
-#tutorial-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 8px;
-}
-
-#tutorial-back {
-  background: transparent;
-  border: 1px solid #444;
-  color: #aaa;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-}
-
-#tutorial-back:hover {
-  background: #333;
-  color: #e6e6e6;
-}
-
-#tutorial-next {
-  background: var(--theme-color);
-  border: none;
-  color: white;
-  padding: 8px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 13px;
-  transition: background 0.3s ease;
-}
-
-#tutorial-next:hover {
-  opacity: 0.85;
-}
-
 .password-wrapper {
   position: relative;
   width: 100%;
@@ -798,33 +525,6 @@ body {
   border-radius: 50%;
   display: inline-block;
   flex-shrink: 0;
-}
-
-.task-category-indicator {
-  position: absolute;
-  bottom: 6px;
-  left: 6px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  cursor: pointer;
-  z-index: 1;
-}
-
-.task-set-category-btn {
-  background: transparent;
-  border: 1px dashed #555;
-  color: #888;
-  font-size: 11px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 150ms ease;
-}
-
-.task-set-category-btn:hover {
-  border-color: #888;
-  color: #ccc;
 }
 
 .task-bottom-row {
@@ -1420,175 +1120,5 @@ body {
 .tutorial-tooltip-wrapper {
   position: fixed;
   pointer-events: auto;
-}
-
-.tutorial-tooltip {
-  position: relative;
-  max-width: 320px;
-  min-width: 240px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  border-radius: 12px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-  padding: 16px 18px;
-  color: #e6e6e6;
-}
-
-.tutorial-tooltip-arrow {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #2a2a2a;
-  border: 1px solid #3a3a3a;
-  transform: rotate(45deg);
-}
-
-.tooltip-bottom .tutorial-tooltip-arrow {
-  top: -7px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  border-left: none;
-  border-bottom: none;
-}
-
-.tooltip-top .tutorial-tooltip-arrow {
-  bottom: -7px;
-  left: 50%;
-  transform: translateX(-50%) rotate(45deg);
-  border-right: none;
-  border-top: none;
-}
-
-.tooltip-left .tutorial-tooltip-arrow {
-  right: -7px;
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
-  border-left: none;
-  border-bottom: none;
-}
-
-.tooltip-right .tutorial-tooltip-arrow {
-  left: -7px;
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
-  border-right: none;
-  border-top: none;
-}
-
-.tutorial-tooltip-content {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.tutorial-progress {
-  font-size: 11px;
-  color: #888;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.tutorial-tooltip-title {
-  font-size: 15px;
-  font-weight: 600;
-  color: #f0f0f0;
-  margin: 0;
-  line-height: 1.3;
-}
-
-.tutorial-tooltip-desc {
-  font-size: 13px;
-  color: #aaa;
-  margin: 0;
-  line-height: 1.5;
-}
-
-.tutorial-tooltip-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
-  gap: 8px;
-}
-
-.tutorial-tooltip-hint {
-  font-size: 11px;
-  color: #666;
-}
-
-.tutorial-tooltip-next-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tutorial-tooltip-next {
-  background: var(--theme-color);
-  border: none;
-  border-radius: 6px;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 600;
-  font-family: inherit;
-  padding: 6px 14px;
-  cursor: pointer;
-  transition: all 150ms ease;
-  white-space: nowrap;
-}
-
-.tutorial-tooltip-next:hover {
-  filter: brightness(1.15);
-  transform: translateY(-1px);
-}
-
-.tutorial-tooltip-next:active {
-  transform: translateY(0);
-}
-
-.tutorial-tooltip-skip {
-  background: none;
-  border: 1px solid #444;
-  border-radius: 6px;
-  color: #888;
-  font-size: 12px;
-  font-family: inherit;
-  padding: 5px 12px;
-  cursor: pointer;
-  transition: all 150ms ease;
-  white-space: nowrap;
-}
-
-.tutorial-tooltip-skip:hover {
-  border-color: #666;
-  color: #ccc;
-  background: #333;
-}
-
-
-
-/* ── TUTORIAL RESPONSIVE ── */
-@media (max-width: 640px) {
-  .tutorial-tooltip {
-    max-width: 90vw;
-    min-width: unset;
-    padding: 12px 14px;
-  }
-
-  .tutorial-tooltip-title {
-    font-size: 14px;
-  }
-
-  .tutorial-tooltip-desc {
-    font-size: 12px;
-  }
-
-  .tutorial-tooltip-hint {
-    font-size: 10px;
-  }
-
-  .tutorial-tooltip-skip {
-    font-size: 11px;
-    padding: 4px 10px;
-  }
 }
 

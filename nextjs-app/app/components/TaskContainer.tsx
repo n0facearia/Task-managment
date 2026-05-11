@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import Header from "./Header";
 import KanbanColumn from "./KanbanColumn";
@@ -12,9 +12,7 @@ import ColumnFocusView from "./ColumnFocusView";
 import DragDropHandler from "./DragDropHandler";
 import { useTasks, type TaskStatus } from "../context/TaskContext";
 import { useTutorial } from "../context/TutorialContext";
-import { CATEGORY_COLORS } from "../constants";
 import { useToast } from "./Toast";
-import HalftoneBackground from "./HalftoneBackground";
 
 const columnVariants = {
   hidden: {},
@@ -78,27 +76,39 @@ export default function TaskContainer({ onLogout }: TaskContainerProps) {
     }
   }
 
-  const activeTasks = renderTasks.filter((t) => t.status === "active");
-  const renderInProgressTasks = renderTasks.filter((t) => t.status === "inProgress");
-  const renderCompletedTasks = renderTasks.filter((t) => t.status === "completed");
+  const activeTasks = useMemo(
+    () => renderTasks.filter((t) => t.status === "active"),
+    [renderTasks],
+  );
+  const renderInProgressTasks = useMemo(
+    () => renderTasks.filter((t) => t.status === "inProgress"),
+    [renderTasks],
+  );
+  const renderCompletedTasks = useMemo(
+    () => renderTasks.filter((t) => t.status === "completed"),
+    [renderTasks],
+  );
 
-  const filteredInProgressTasks = activeCategory
-    ? renderInProgressTasks.filter(
-        (t) => t.category.toLowerCase() === activeCategory.toLowerCase(),
-      )
-    : renderInProgressTasks;
+  const filteredActiveTasks = useMemo(
+    () => activeCategory
+      ? activeTasks.filter((t) => t.category.toLowerCase() === activeCategory.toLowerCase())
+      : activeTasks,
+    [activeTasks, activeCategory],
+  );
 
-  const filteredCompletedTasks = activeCategory
-    ? renderCompletedTasks.filter(
-        (t) => t.category.toLowerCase() === activeCategory.toLowerCase(),
-      )
-    : renderCompletedTasks;
+  const filteredInProgressTasks = useMemo(
+    () => activeCategory
+      ? renderInProgressTasks.filter((t) => t.category.toLowerCase() === activeCategory.toLowerCase())
+      : renderInProgressTasks,
+    [renderInProgressTasks, activeCategory],
+  );
 
-  const filteredActiveTasks = activeCategory
-    ? activeTasks.filter(
-        (t) => t.category.toLowerCase() === activeCategory.toLowerCase(),
-      )
-    : activeTasks;
+  const filteredCompletedTasks = useMemo(
+    () => activeCategory
+      ? renderCompletedTasks.filter((t) => t.category.toLowerCase() === activeCategory.toLowerCase())
+      : renderCompletedTasks,
+    [renderCompletedTasks, activeCategory],
+  );
 
   const columnTasks = useCallback(
     (status: TaskStatus) => {

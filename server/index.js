@@ -74,6 +74,12 @@ try {
   // Column already exists, safe to ignore
 }
 
+try {
+  db.exec(`CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id)`);
+} catch (e) {
+  // Index already exists, safe to ignore
+}
+
 // ── HELPER ─────────────────────────────────────────
 
 function generateId() {

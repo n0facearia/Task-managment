@@ -11,7 +11,7 @@ This is the frontend of a **Kanban-style task management application** built wit
 - **Backend Communication**: REST API via `app/lib/api.ts` (Express server on port 3001)
 - **Authentication**: JWT (Bearer tokens via `jsonwebtoken`)
 - **Background**: Interactive halftone canvas (`HalftoneBackground.tsx`)
-- **Tutorial**: 10-step interactive walkthrough
+- **Tutorial**: 16-step interactive walkthrough
 
 ## Getting Started
 
@@ -44,7 +44,7 @@ app/
 │   ├── DragDropHandler.tsx     # Drag-and-drop logic
 │   ├── CategoryFocusView.tsx   # Category expanded view
 │   ├── ColumnFocusView.tsx     # Column expanded view
-│   ├── Header.tsx              # App header with Help button
+│   ├── Header.tsx              # App header with Tutorial button
 │   ├── Toast.tsx               # Toast notifications
 │   ├── HalftoneBackground.tsx  # Interactive canvas dot grid
 │   ├── ThemeProvider.tsx       # Dynamic category-based theming
@@ -58,7 +58,7 @@ app/
 ├── hooks/
 │   └── useTutorialActionDetector.ts  # Action detection for tutorial
 ├── data/
-│   └── tutorialSteps.ts        # 10 tutorial step definitions
+│   └── tutorialSteps.ts        # 16 tutorial step definitions
 ├── lib/
 │   └── api.ts                  # API wrapper (JWT Bearer auth)
 ├── globals.css                 # Custom styles + Tailwind
@@ -75,10 +75,11 @@ app/
 - Color-coded categories with collapsible sidebar filtering
 - Focus views (double-click columns or categories)
 - JWT authentication with auto-logout on expired tokens
-- 10-step interactive tutorial (auto-starts after signup)
+- 16-step interactive tutorial (auto-starts after signup)
 - Interactive halftone dot grid background
 - Hover float effects on columns, tasks, and sidebar
 - Dynamic theme switching based on selected category
+- Performance: idle animation halt, memoized context, lazy loading, useMemo filters, SQL index
 
 ## Note
 

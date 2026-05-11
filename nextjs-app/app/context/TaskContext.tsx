@@ -261,31 +261,36 @@ export function TaskProvider({ children }: { children: ReactNode }) {
     setTasks([]);
   }, []);
 
+  const contextValue = useMemo(() => ({
+    tasks,
+    inProgressTasks,
+    completedTasks,
+    activeCategory,
+    themeColor,
+    detailTask,
+    editingDraft,
+    loading,
+    error,
+    retry: loadTasks,
+    addTask,
+    deleteTask,
+    setTaskStatus,
+    updateTask,
+    setActiveCategory: setActiveCategoryWithTheme,
+    openTaskDetail,
+    closeTaskDetail,
+    clearTasks,
+    hideTasks,
+    setHideTasks,
+  }), [
+    tasks, inProgressTasks, completedTasks, activeCategory, themeColor,
+    detailTask, editingDraft, loading, error, loadTasks,
+    addTask, deleteTask, setTaskStatus, updateTask, setActiveCategoryWithTheme,
+    openTaskDetail, closeTaskDetail, clearTasks, hideTasks, setHideTasks,
+  ]);
+
   return (
-    <TaskContext.Provider
-      value={{
-        tasks,
-        inProgressTasks,
-        completedTasks,
-        activeCategory,
-        themeColor,
-        detailTask,
-        editingDraft,
-        loading,
-        error,
-        retry: loadTasks,
-        addTask,
-        deleteTask,
-        setTaskStatus,
-        updateTask,
-        setActiveCategory: setActiveCategoryWithTheme,
-        openTaskDetail,
-        closeTaskDetail,
-        clearTasks,
-        hideTasks,
-        setHideTasks,
-      }}
-    >
+    <TaskContext.Provider value={contextValue}>
       {children}
     </TaskContext.Provider>
   );
